@@ -1,0 +1,68 @@
+[
+  {
+    "id": "powerbi-sales-dashboard",
+    "title": "Sales Performance Dashboard",
+    "description": "Comprehensive Power BI dashboard analyzing sales performance across regions, products, and time periods with interactive filters and KPI tracking.",
+    "category": "power-bi",
+    "tags": ["Power BI", "DAX", "Sales Analytics", "KPIs"],
+    "image": "/src/assets/powerbi-dashboard.jpg",
+    "link": "https://app.powerbi.com/your-dashboard-link",
+    "github": "https://github.com/yourusername/sales-dashboard",
+    "featured": true
+  },
+  {
+    "id": "dbt-data-warehouse",
+    "title": "Modern Data Warehouse with dbt",
+    "description": "End-to-end data transformation pipeline using dbt, implementing dimensional modeling and automated testing for reliable analytics.",
+    "category": "dbt",
+    "tags": ["dbt", "Data Modeling", "ETL", "Testing"],
+    "image": "/src/assets/dbt-code.jpg",
+    "link": "",
+    "github": "https://github.com/yourusername/dbt-warehouse",
+    "featured": true
+  },
+  {
+    "id": "sql-customer-analysis",
+    "title": "Customer Segmentation Analysis",
+    "description": "Advanced SQL queries and stored procedures for customer behavior analysis, churn prediction, and lifetime value calculations.",
+    "category": "sql",
+    "tags": ["SQL", "PostgreSQL", "Customer Analytics", "Segmentation"],
+    "image": "/src/assets/sql-analysis.jpg",
+    "link": "",
+    "github": "https://github.com/yourusername/customer-analysis",
+    "featured": false
+  },
+  {
+    "id": "powerbi-financial-reporting",
+    "title": "Financial Reporting Suite",
+    "description": "Automated financial reports with Power BI including P&L statements, budget variance analysis, and cash flow forecasting.",
+    "category": "power-bi",
+    "tags": ["Power BI", "Financial Analysis", "Reporting", "Automation"],
+    "image": "/src/assets/powerbi-dashboard.jpg",
+    "link": "https://app.powerbi.com/your-financial-dashboard",
+    "github": "",
+    "featured": false
+  },
+  {
+    "id": "dbt-incremental-models",
+    "title": "Incremental Data Processing",
+    "description": "Optimized dbt models with incremental loading strategies for large datasets, reducing processing time by 75%.",
+    "category": "dbt",
+    "tags": ["dbt", "Performance", "Incremental", "Optimization"],
+    "image": "/src/assets/dbt-code.jpg",
+    "link": "",
+    "github": "https://github.com/yourusername/dbt-incremental",
+    "featured": false
+  },
+  {
+    "id": "sql-performance-optimization",
+    "title": "Database Performance Optimization",
+    "description": "Complex query optimization project improving database performance by 60% through indexing strategies and query rewriting.",
+    "category": "sql",
+    "tags": ["SQL", "Performance", "Indexing", "Optimization"],
+    "image": "/src/assets/sql-analysis.jpg",
+    "link": "",
+    "github": "https://github.com/yourusername/sql-optimization",
+    "featured": true
+  }
+]

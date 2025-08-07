@@ -3,6 +3,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ExternalLink, Github, Star } from 'lucide-react';
 
+// Import images
+import powerbiImage from '@/assets/powerbi-dashboard.jpg';
+import dbtImage from '@/assets/dbt-code.jpg';
+import sqlImage from '@/assets/sql-analysis.jpg';
+
 interface Project {
   id: string;
   title: string;
@@ -20,6 +25,14 @@ interface ProjectCardProps {
 }
 
 const ProjectCard = ({ project }: ProjectCardProps) => {
+  // Map image paths to imported images
+  const getImageSrc = (imagePath: string) => {
+    if (imagePath.includes('powerbi')) return powerbiImage;
+    if (imagePath.includes('dbt')) return dbtImage;
+    if (imagePath.includes('sql')) return sqlImage;
+    return imagePath; // fallback
+  };
+
   return (
     <Card className="bg-gradient-card border-border/50 hover-lift group relative overflow-hidden">
       {/* Featured Badge */}
@@ -35,7 +48,7 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
       {/* Project Image */}
       <div className="relative overflow-hidden">
         <img 
-          src={project.image} 
+          src={getImageSrc(project.image)} 
           alt={project.title}
           className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
         />

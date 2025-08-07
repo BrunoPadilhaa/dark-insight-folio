@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/hooks/use-toast';
-import { X } from 'lucide-react';
+import { X, Upload, ImageIcon } from 'lucide-react';
 
 interface Project {
   id: string;
@@ -39,6 +39,8 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
     github: '',
     featured: false,
   });
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -53,14 +55,60 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
         github: project.github || '',
         featured: project.featured,
       });
+      setImagePreview(project.image || '');
     }
   }, [project]);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview(previewUrl);
+    }
+  };
+
+  const uploadImage = async (): Promise<string | null> => {
+    if (!imageFile) return formData.image;
+
+    try {
+      const fileExt = imageFile.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = `projects/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('project-images')
+        .upload(filePath, imageFile);
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage
+        .from('project-images')
+        .getPublicUrl(filePath);
+
+      return data.publicUrl;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast({
+        title: "Error",
+        description: "Failed to upload image",
+        variant: "destructive",
+      });
+      return null;
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      // Upload image if a new one was selected
+      const finalImageUrl = await uploadImage();
+      if (imageFile && !finalImageUrl) {
+        return; // Upload failed, don't proceed
+      }
+
       const tagsArray = formData.tags
         .split(',')
         .map(tag => tag.trim())
@@ -71,7 +119,7 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
         description: formData.description,
         category: formData.category,
         tags: tagsArray,
-        image: formData.image || null,
+        image: finalImageUrl || null,
         link: formData.link || null,
         github: formData.github || null,
         featured: formData.featured,
@@ -201,13 +249,52 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="image">Image URL</Label>
-              <Input
-                id="image"
-                value={formData.image}
-                onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
-                placeholder="/src/assets/project-image.jpg"
-              />
+              <Label htmlFor="image">Project Image</Label>
+              <div className="space-y-4">
+                {imagePreview && (
+                  <div className="relative w-full h-48 border border-border rounded-lg overflow-hidden">
+                    <img 
+                      src={imagePreview} 
+                      alt="Preview" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                <div className="flex items-center gap-4">
+                  <Input
+                    id="image-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => document.getElementById('image-upload')?.click()}
+                    className="flex items-center gap-2"
+                  >
+                    <Upload className="w-4 h-4" />
+                    Upload Image
+                  </Button>
+                  {!imagePreview && (
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <ImageIcon className="w-4 h-4" />
+                      <span className="text-sm">No image selected</span>
+                    </div>
+                  )}
+                </div>
+                <Input
+                  id="image-url"
+                  value={formData.image}
+                  onChange={(e) => {
+                    setFormData(prev => ({ ...prev, image: e.target.value }));
+                    setImagePreview(e.target.value);
+                  }}
+                  placeholder="Or enter image URL"
+                  className="text-sm"
+                />
+              </div>
             </div>
 
             <div className="space-y-2">

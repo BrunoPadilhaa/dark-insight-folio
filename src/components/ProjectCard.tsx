@@ -25,8 +25,10 @@ interface ProjectCardProps {
 }
 
 const ProjectCard = ({ project }: ProjectCardProps) => {
-  // Map image paths to imported images
+  // Map image paths to imported images, or use uploaded URLs
   const getImageSrc = (imagePath: string) => {
+    if (!imagePath) return powerbiImage; // fallback
+    if (imagePath.includes('supabase') || imagePath.startsWith('http')) return imagePath; // uploaded image
     if (imagePath.includes('powerbi')) return powerbiImage;
     if (imagePath.includes('dbt')) return dbtImage;
     if (imagePath.includes('sql')) return sqlImage;

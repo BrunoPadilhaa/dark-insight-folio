@@ -155,6 +155,62 @@ export default function AdminDashboard() {
       </div>
 
       <div className="container mx-auto px-4 py-8">
+        {/* Resume Upload Section */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Resume Management</CardTitle>
+            <CardDescription>Upload your resume (PDF format)</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <input
+                type="file"
+                accept=".pdf"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+
+                  try {
+                    // Delete existing resume first
+                    const { data: existingFiles } = await supabase.storage
+                      .from('resumes')
+                      .list('');
+                    
+                    if (existingFiles && existingFiles.length > 0) {
+                      await supabase.storage
+                        .from('resumes')
+                        .remove(existingFiles.map(f => f.name));
+                    }
+
+                    // Upload new resume
+                    const { error } = await supabase.storage
+                      .from('resumes')
+                      .upload('resume.pdf', file, {
+                        upsert: true
+                      });
+
+                    if (error) throw error;
+
+                    toast({
+                      title: "Success",
+                      description: "Resume uploaded successfully",
+                    });
+                  } catch (error) {
+                    toast({
+                      title: "Error",
+                      description: "Failed to upload resume",
+                      variant: "destructive",
+                    });
+                  }
+                }}
+                className="block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+              />
+              <p className="text-sm text-muted-foreground">
+                Upload a PDF file. This will replace any existing resume.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
         <div className="space-y-6">
           {projects.map((project) => (
             <Card key={project.id} className="relative">

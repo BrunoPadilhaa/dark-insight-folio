@@ -1,5 +1,6 @@
 import { ArrowDown, Github, Linkedin, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
 
 const Hero = () => {
   return (
@@ -45,6 +46,26 @@ const Hero = () => {
               variant="outline" 
               size="lg" 
               className="border-primary text-primary hover:bg-primary hover:text-white px-8 py-4 text-lg transition-all duration-300"
+              onClick={async () => {
+                try {
+                  const { data } = await supabase.storage
+                    .from('resumes')
+                    .list('', { limit: 1 });
+                  
+                  if (data && data.length > 0) {
+                    const { data: file } = supabase.storage
+                      .from('resumes')
+                      .getPublicUrl(data[0].name);
+                    
+                    window.open(file.publicUrl, '_blank');
+                  } else {
+                    alert('No resume available for download');
+                  }
+                } catch (error) {
+                  console.error('Error downloading resume:', error);
+                  alert('Error downloading resume');
+                }
+              }}
             >
               Download Resume
             </Button>

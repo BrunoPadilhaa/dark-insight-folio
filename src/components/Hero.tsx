@@ -32,6 +32,11 @@ const Hero = () => {
             <Button 
               size="lg" 
               className="bg-gradient-primary hover:opacity-90 text-white font-medium px-8 py-4 text-lg hover-glow group"
+              onClick={() => {
+                document.getElementById('projects')?.scrollIntoView({ 
+                  behavior: 'smooth' 
+                });
+              }}
             >
               View My Work
               <ArrowDown className="ml-2 h-5 w-5 group-hover:translate-y-1 transition-transform" />

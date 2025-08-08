@@ -13,6 +13,9 @@ interface Project {
   link?: string;
   github?: string;
   featured: boolean;
+  has_details: boolean;
+  details_content?: string;
+  details_images?: string[];
 }
 
 const Projects = () => {

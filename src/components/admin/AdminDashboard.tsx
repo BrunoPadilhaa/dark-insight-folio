@@ -19,6 +19,9 @@ interface Project {
   github?: string;
   featured: boolean;
   display_order: number;
+  has_details: boolean;
+  details_content?: string;
+  details_images?: string[];
 }
 
 export default function AdminDashboard() {

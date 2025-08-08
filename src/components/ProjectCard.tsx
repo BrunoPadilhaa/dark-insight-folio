@@ -1,7 +1,8 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ExternalLink, Github, Star } from 'lucide-react';
+import { ExternalLink, Github, Star, FileText } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 // Import images
 import powerbiImage from '@/assets/powerbi-dashboard.jpg';
@@ -18,6 +19,9 @@ interface Project {
   link?: string;
   github?: string;
   featured: boolean;
+  has_details: boolean;
+  details_content?: string;
+  details_images?: string[];
 }
 
 interface ProjectCardProps {
@@ -25,6 +29,7 @@ interface ProjectCardProps {
 }
 
 const ProjectCard = ({ project }: ProjectCardProps) => {
+  const navigate = useNavigate();
   // Map image paths to imported images, or use uploaded URLs
   const getImageSrc = (imagePath: string) => {
     if (!imagePath) return powerbiImage; // fallback
@@ -85,7 +90,18 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-3">
+        <div className="flex gap-2 flex-wrap">
+          {project.has_details && (
+            <Button 
+              size="sm" 
+              variant="secondary"
+              className="bg-secondary hover:bg-secondary/80 text-secondary-foreground"
+              onClick={() => navigate(`/project/${project.id}`)}
+            >
+              <FileText className="w-4 h-4 mr-2" />
+              Details
+            </Button>
+          )}
           {project.link && (
             <Button 
               size="sm" 

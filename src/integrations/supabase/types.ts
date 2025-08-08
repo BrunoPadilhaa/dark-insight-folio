@@ -19,9 +19,12 @@ export type Database = {
           category: string
           created_at: string
           description: string
+          details_content: string | null
+          details_images: string[] | null
           display_order: number
           featured: boolean
           github: string | null
+          has_details: boolean
           id: string
           image: string | null
           link: string | null
@@ -33,9 +36,12 @@ export type Database = {
           category: string
           created_at?: string
           description: string
+          details_content?: string | null
+          details_images?: string[] | null
           display_order?: number
           featured?: boolean
           github?: string | null
+          has_details?: boolean
           id?: string
           image?: string | null
           link?: string | null
@@ -47,9 +53,12 @@ export type Database = {
           category?: string
           created_at?: string
           description?: string
+          details_content?: string | null
+          details_images?: string[] | null
           display_order?: number
           featured?: boolean
           github?: string | null
+          has_details?: boolean
           id?: string
           image?: string | null
           link?: string | null

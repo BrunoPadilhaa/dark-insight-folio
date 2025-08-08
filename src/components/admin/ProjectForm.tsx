@@ -21,6 +21,9 @@ interface Project {
   github?: string;
   featured: boolean;
   display_order: number;
+  has_details: boolean;
+  details_content?: string;
+  details_images?: string[];
 }
 
 interface ProjectFormProps {
@@ -38,6 +41,9 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
     link: '',
     github: '',
     featured: false,
+    has_details: false,
+    details_content: '',
+    details_images: [] as string[],
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
@@ -54,6 +60,9 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
         link: project.link || '',
         github: project.github || '',
         featured: project.featured,
+        has_details: project.has_details,
+        details_content: project.details_content || '',
+        details_images: project.details_images || [],
       });
       setImagePreview(project.image || '');
     }
@@ -123,6 +132,9 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
         link: formData.link || null,
         github: formData.github || null,
         featured: formData.featured,
+        has_details: formData.has_details,
+        details_content: formData.details_content || null,
+        details_images: formData.details_images,
       };
 
       if (project) {
@@ -327,6 +339,50 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
               />
               <Label htmlFor="featured">Featured project</Label>
             </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="has_details"
+                checked={formData.has_details}
+                onCheckedChange={(checked) => 
+                  setFormData(prev => ({ ...prev, has_details: checked as boolean }))
+                }
+              />
+              <Label htmlFor="has_details">Has detailed page</Label>
+            </div>
+
+            {formData.has_details && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="details_content">Detailed Content</Label>
+                  <Textarea
+                    id="details_content"
+                    value={formData.details_content}
+                    onChange={(e) => setFormData(prev => ({ ...prev, details_content: e.target.value }))}
+                    placeholder="Write detailed explanation of what you have done in this project..."
+                    rows={6}
+                    className="min-h-[150px]"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="details_images">Additional Images (URLs)</Label>
+                  <Textarea
+                    id="details_images"
+                    value={formData.details_images.join('\n')}
+                    onChange={(e) => {
+                      const urls = e.target.value.split('\n').filter(url => url.trim());
+                      setFormData(prev => ({ ...prev, details_images: urls }));
+                    }}
+                    placeholder="Enter image URLs, one per line&#10;https://example.com/image1.jpg&#10;https://example.com/image2.jpg"
+                    rows={4}
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    Enter one image URL per line. These images will be displayed in the project details page.
+                  </p>
+                </div>
+              </>
+            )}
 
             <div className="flex gap-4 pt-4">
               <Button type="submit" disabled={loading} className="flex-1">

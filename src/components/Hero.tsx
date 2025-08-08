@@ -82,7 +82,7 @@ const Hero = () => {
               <Github className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
             </a>
             <a 
-              href="https://linkedin.com/in/yourusername" 
+              href="https://www.linkedin.com/in/brunopadilha-brp/" 
               target="_blank" 
               rel="noopener noreferrer"
               className="p-3 rounded-full border border-border hover:border-primary hover:bg-primary/10 transition-all duration-300 hover-lift group"

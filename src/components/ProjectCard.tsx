@@ -91,17 +91,6 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
 
         {/* Action Buttons */}
         <div className="flex gap-2 flex-wrap">
-          {project.has_details && (
-            <Button 
-              size="sm" 
-              variant="secondary"
-              className="bg-secondary hover:bg-secondary/80 text-secondary-foreground"
-              onClick={() => navigate(`/project/${project.id}`)}
-            >
-              <FileText className="w-4 h-4 mr-2" />
-              Details
-            </Button>
-          )}
           {project.link && (
             <Button 
               size="sm" 
@@ -112,6 +101,17 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
                 <ExternalLink className="w-4 h-4 mr-2" />
                 View Live
               </a>
+            </Button>
+          )}
+          {project.has_details && (
+            <Button 
+              size="sm" 
+              variant="secondary"
+              className="bg-secondary hover:bg-secondary/80 text-secondary-foreground"
+              onClick={() => navigate(`/project/${project.id}`)}
+            >
+              <FileText className="w-4 h-4 mr-2" />
+              Details
             </Button>
           )}
           {project.github && (

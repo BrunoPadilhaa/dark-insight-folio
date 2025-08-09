@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from '@/hooks/use-toast';
-import { PlusCircle, Edit2, Trash2, LogOut, ArrowUp, ArrowDown } from 'lucide-react';
+import { PlusCircle, Edit2, Trash2, LogOut, ArrowUp, ArrowDown, Home } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import ProjectForm from './ProjectForm';
 
 interface Project {
@@ -144,6 +145,12 @@ export default function AdminDashboard() {
               <p className="text-muted-foreground">Manage your BI portfolio projects</p>
             </div>
             <div className="flex items-center gap-4">
+              <Link to="/">
+                <Button variant="outline" className="flex items-center gap-2">
+                  <Home className="w-4 h-4" />
+                  Go to Main Page
+                </Button>
+              </Link>
               <Button onClick={() => setShowForm(true)} className="flex items-center gap-2">
                 <PlusCircle className="w-4 h-4" />
                 Add Project

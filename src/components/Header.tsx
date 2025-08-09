@@ -1,8 +1,12 @@
 import { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Settings } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
+import { Button } from '@/components/ui/button';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user } = useAuth();
 
   const navItems = [
     { label: 'Home', href: '#home' },
@@ -21,7 +25,7 @@ const Header = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
               <a
                 key={item.label}
@@ -32,6 +36,14 @@ const Header = () => {
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full" />
               </a>
             ))}
+            {user && (
+              <Link to="/admin/dashboard">
+                <Button variant="outline" size="sm" className="flex items-center gap-2">
+                  <Settings className="w-4 h-4" />
+                  Admin
+                </Button>
+              </Link>
+            )}
           </nav>
 
           {/* Mobile Menu Button */}
@@ -57,6 +69,14 @@ const Header = () => {
                   {item.label}
                 </a>
               ))}
+              {user && (
+                <Link to="/admin/dashboard" onClick={() => setIsMenuOpen(false)}>
+                  <Button variant="outline" size="sm" className="flex items-center gap-2 w-full justify-start">
+                    <Settings className="w-4 h-4" />
+                    Admin
+                  </Button>
+                </Link>
+              )}
             </div>
           </nav>
         )}

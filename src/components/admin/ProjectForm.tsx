@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/hooks/use-toast';
 import { X, Upload, ImageIcon } from 'lucide-react';
+import MDEditor from '@uiw/react-md-editor';
 
 interface Project {
   id: string;
@@ -48,6 +49,7 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (project) {
@@ -98,6 +100,34 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
       return data.publicUrl;
     } catch (error) {
       console.error('Error uploading image:', error);
+      toast({
+        title: "Error",
+        description: "Failed to upload image",
+        variant: "destructive",
+      });
+      return null;
+    }
+  };
+
+  const uploadContentImage = async (file: File): Promise<string | null> => {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = `content/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('project-images')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage
+        .from('project-images')
+        .getPublicUrl(filePath);
+
+      return data.publicUrl;
+    } catch (error) {
+      console.error('Error uploading content image:', error);
       toast({
         title: "Error",
         description: "Failed to upload image",
@@ -354,31 +384,51 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
             {formData.has_details && (
               <>
                 <div className="space-y-2">
-                  <Label htmlFor="details_content">Detailed Content</Label>
-                  <Textarea
-                    id="details_content"
-                    value={formData.details_content}
-                    onChange={(e) => setFormData(prev => ({ ...prev, details_content: e.target.value }))}
-                    placeholder="Write detailed explanation of what you have done in this project..."
-                    rows={6}
-                    className="min-h-[150px]"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="details_images">Additional Images (URLs)</Label>
-                  <Textarea
-                    id="details_images"
-                    value={formData.details_images.join('\n')}
-                    onChange={(e) => {
-                      const urls = e.target.value.split('\n').filter(url => url.trim());
-                      setFormData(prev => ({ ...prev, details_images: urls }));
-                    }}
-                    placeholder="Enter image URLs, one per line&#10;https://example.com/image1.jpg&#10;https://example.com/image2.jpg"
-                    rows={4}
-                  />
+                  <Label htmlFor="details_content">Project Details (Markdown)</Label>
+                  <div className="border border-border rounded-lg overflow-hidden">
+                    <MDEditor
+                      value={formData.details_content}
+                      onChange={(val) => setFormData(prev => ({ ...prev, details_content: val || '' }))}
+                      preview="edit"
+                      hideToolbar={false}
+                      height={300}
+                      data-color-mode="light"
+                      commands={[
+                        // Add custom image upload command
+                        {
+                          name: 'image-upload',
+                          keyCommand: 'image-upload',
+                          buttonProps: { 'aria-label': 'Upload image' },
+                          icon: (
+                            <Upload className="w-4 h-4" />
+                          ),
+                          execute: async (state, api) => {
+                            const input = document.createElement('input');
+                            input.type = 'file';
+                            input.accept = 'image/*';
+                            input.onchange = async (e) => {
+                              const file = (e.target as HTMLInputElement).files?.[0];
+                              if (file) {
+                                setUploading(true);
+                                const imageUrl = await uploadContentImage(file);
+                                setUploading(false);
+                                if (imageUrl) {
+                                  const modifyText = `![Image](${imageUrl})`;
+                                  api.replaceSelection(modifyText);
+                                }
+                              }
+                            };
+                            input.click();
+                          },
+                        },
+                      ]}
+                    />
+                  </div>
+                  {uploading && (
+                    <p className="text-sm text-muted-foreground">Uploading image...</p>
+                  )}
                   <p className="text-sm text-muted-foreground">
-                    Enter one image URL per line. These images will be displayed in the project details page.
+                    Use markdown to format your content. Click the upload button to add images inline.
                   </p>
                 </div>
               </>

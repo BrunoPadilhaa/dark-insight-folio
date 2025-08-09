@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, ExternalLink, Github } from "lucide-react";
 import { toast } from "sonner";
+import MDEditor from '@uiw/react-md-editor';
 
 interface Project {
   id: string;
@@ -168,27 +169,11 @@ export default function ProjectDetails() {
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-foreground mb-4">Project Details</h2>
             <div className="prose prose-gray dark:prose-invert max-w-none">
-              <div className="whitespace-pre-wrap text-foreground leading-relaxed">
-                {project.details_content}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Additional Images */}
-        {project.details_images && project.details_images.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-foreground mb-4">Project Images</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {project.details_images.map((imageUrl, index) => (
-                <div key={index} className="rounded-lg overflow-hidden shadow-lg">
-                  <img
-                    src={imageUrl}
-                    alt={`${project.title} - Image ${index + 1}`}
-                    className="w-full h-64 object-cover hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-              ))}
+              <MDEditor.Markdown 
+                source={project.details_content} 
+                className="bg-transparent"
+                data-color-mode="light"
+              />
             </div>
           </div>
         )}

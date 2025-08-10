@@ -153,16 +153,6 @@ export default function ProjectDetails() {
           </div>
         </div>
 
-        {/* Main Image */}
-        {project.image && (
-          <div className="mb-8">
-            <img
-              src={project.image}
-              alt={project.title}
-              className="w-full h-64 md:h-96 object-cover rounded-lg shadow-lg"
-            />
-          </div>
-        )}
 
         {/* Details Content */}
         {project.details_content && (

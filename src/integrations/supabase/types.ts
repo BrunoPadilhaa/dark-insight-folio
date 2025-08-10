@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      certifications: {
+        Row: {
+          badge_image: string | null
+          created_at: string
+          date_earned: string
+          display_order: number
+          id: string
+          issuer: string
+          name: string
+          updated_at: string
+          verification_link: string | null
+        }
+        Insert: {
+          badge_image?: string | null
+          created_at?: string
+          date_earned: string
+          display_order?: number
+          id?: string
+          issuer: string
+          name: string
+          updated_at?: string
+          verification_link?: string | null
+        }
+        Update: {
+          badge_image?: string | null
+          created_at?: string
+          date_earned?: string
+          display_order?: number
+          id?: string
+          issuer?: string
+          name?: string
+          updated_at?: string
+          verification_link?: string | null
+        }
+        Relationships: []
+      }
       projects: {
         Row: {
           category: string

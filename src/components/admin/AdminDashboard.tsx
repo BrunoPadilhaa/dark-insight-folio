@@ -4,10 +4,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { toast } from '@/hooks/use-toast';
-import { PlusCircle, Edit2, Trash2, LogOut, ArrowUp, ArrowDown, Home } from 'lucide-react';
+import { toast } from 'sonner';
+import { Plus, Edit, Trash2, LogOut, ChevronUp, ChevronDown, Home, Award } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ProjectForm from './ProjectForm';
+import CertificationForm from './CertificationForm';
 
 interface Project {
   id: string;
@@ -25,15 +26,30 @@ interface Project {
   details_images?: string[];
 }
 
+interface Certification {
+  id: string;
+  name: string;
+  issuer: string;
+  date_earned: string;
+  badge_image?: string;
+  verification_link?: string;
+  display_order: number;
+}
+
 export default function AdminDashboard() {
   const { signOut } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
+  const [certifications, setCertifications] = useState<Certification[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
+  const [showProjectForm, setShowProjectForm] = useState(false);
+  const [showCertificationForm, setShowCertificationForm] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [editingCertification, setEditingCertification] = useState<Certification | null>(null);
+  const [activeTab, setActiveTab] = useState<'projects' | 'certifications'>('projects');
 
   useEffect(() => {
     fetchProjects();
+    fetchCertifications();
   }, []);
 
   const fetchProjects = async () => {
@@ -46,11 +62,25 @@ export default function AdminDashboard() {
       if (error) throw error;
       setProjects(data || []);
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to load projects",
-        variant: "destructive",
-      });
+      console.error('Error fetching projects:', error);
+      toast.error('Failed to fetch projects');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchCertifications = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('certifications')
+        .select('*')
+        .order('display_order', { ascending: true });
+
+      if (error) throw error;
+      setCertifications(data || []);
+    } catch (error) {
+      console.error('Error fetching certifications:', error);
+      toast.error('Failed to fetch certifications');
     } finally {
       setLoading(false);
     }
@@ -66,19 +96,11 @@ export default function AdminDashboard() {
         .eq('id', id);
 
       if (error) throw error;
-      
-      toast({
-        title: "Success",
-        description: "Project deleted successfully",
-      });
-      
+      toast.success('Project deleted successfully');
       fetchProjects();
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to delete project",
-        variant: "destructive",
-      });
+      console.error('Error deleting project:', error);
+      toast.error('Failed to delete project');
     }
   };
 
@@ -87,7 +109,7 @@ export default function AdminDashboard() {
     if (!currentProject) return;
 
     const newOrder = direction === 'up' 
-      ? currentProject.display_order - 1
+      ? Math.max(0, currentProject.display_order - 1)
       : currentProject.display_order + 1;
 
     try {
@@ -99,23 +121,69 @@ export default function AdminDashboard() {
       if (error) throw error;
       fetchProjects();
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to reorder project",
-        variant: "destructive",
-      });
+      console.error('Error reordering project:', error);
+      toast.error('Failed to reorder project');
     }
   };
 
   const handleEdit = (project: Project) => {
     setEditingProject(project);
-    setShowForm(true);
+    setShowProjectForm(true);
   };
 
   const handleCloseForm = () => {
-    setShowForm(false);
+    setShowProjectForm(false);
     setEditingProject(null);
     fetchProjects();
+  };
+
+  const handleDeleteCertification = async (id: string) => {
+    if (window.confirm('Are you sure you want to delete this certification?')) {
+      try {
+        const { error } = await supabase
+          .from('certifications')
+          .delete()
+          .eq('id', id);
+
+        if (error) throw error;
+        toast.success('Certification deleted successfully');
+        fetchCertifications();
+      } catch (error) {
+        console.error('Error deleting certification:', error);
+        toast.error('Failed to delete certification');
+      }
+    }
+  };
+
+  const handleReorderCertification = async (id: string, direction: 'up' | 'down') => {
+    const currentIndex = certifications.findIndex(cert => cert.id === id);
+    const newOrder = direction === 'up' ? 
+      Math.max(0, certifications[currentIndex].display_order - 1) :
+      certifications[currentIndex].display_order + 1;
+
+    try {
+      const { error } = await supabase
+        .from('certifications')
+        .update({ display_order: newOrder })
+        .eq('id', id);
+
+      if (error) throw error;
+      fetchCertifications();
+    } catch (error) {
+      console.error('Error reordering certification:', error);
+      toast.error('Failed to reorder certification');
+    }
+  };
+
+  const handleEditCertification = (certification: Certification) => {
+    setEditingCertification(certification);
+    setShowCertificationForm(true);
+  };
+
+  const handleCloseCertificationForm = () => {
+    setShowCertificationForm(false);
+    setEditingCertification(null);
+    fetchCertifications();
   };
 
   const getCategoryColor = (category: string) => {
@@ -140,21 +208,49 @@ export default function AdminDashboard() {
       <div className="border-b border-border/40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Admin Dashboard</h1>
-              <p className="text-muted-foreground">Manage your BI portfolio projects</p>
-            </div>
+            <h1 className="text-3xl font-bold text-foreground">Admin Dashboard</h1>
             <div className="flex items-center gap-4">
+              <div className="flex bg-secondary rounded-lg p-1">
+                <button
+                  onClick={() => setActiveTab('projects')}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    activeTab === 'projects' 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'text-secondary-foreground hover:text-foreground'
+                  }`}
+                >
+                  Projects
+                </button>
+                <button
+                  onClick={() => setActiveTab('certifications')}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    activeTab === 'certifications' 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'text-secondary-foreground hover:text-foreground'
+                  }`}
+                >
+                  Certifications
+                </button>
+              </div>
+              <Button
+                onClick={() => {
+                  if (activeTab === 'projects') {
+                    setShowProjectForm(true);
+                  } else {
+                    setShowCertificationForm(true);
+                  }
+                }}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add {activeTab === 'projects' ? 'Project' : 'Certification'}
+              </Button>
               <Link to="/">
                 <Button variant="outline" className="flex items-center gap-2">
                   <Home className="w-4 h-4" />
-                  Go to Main Page
+                  Main Page
                 </Button>
               </Link>
-              <Button onClick={() => setShowForm(true)} className="flex items-center gap-2">
-                <PlusCircle className="w-4 h-4" />
-                Add Project
-              </Button>
               <Button variant="outline" onClick={signOut} className="flex items-center gap-2">
                 <LogOut className="w-4 h-4" />
                 Sign Out
@@ -165,150 +261,202 @@ export default function AdminDashboard() {
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Resume Upload Section */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>Resume Management</CardTitle>
-            <CardDescription>Upload your resume (PDF format)</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
+        {/* Content based on active tab */}
+        {activeTab === 'projects' ? (
+          <div className="space-y-6">
+            <div className="bg-card rounded-lg border border-border p-6">
+              <h2 className="text-xl font-semibold text-foreground mb-4">Resume Management</h2>
               <input
                 type="file"
                 accept=".pdf"
-                onChange={async (e) => {
+                onChange={(e) => {
                   const file = e.target.files?.[0];
-                  if (!file) return;
-
-                  try {
-                    // Delete existing resume first
-                    const { data: existingFiles } = await supabase.storage
-                      .from('resumes')
-                      .list('');
-                    
-                    if (existingFiles && existingFiles.length > 0) {
-                      await supabase.storage
-                        .from('resumes')
-                        .remove(existingFiles.map(f => f.name));
-                    }
-
-                    // Upload new resume
-                    const { error } = await supabase.storage
-                      .from('resumes')
-                      .upload('resume.pdf', file, {
-                        upsert: true
-                      });
-
-                    if (error) throw error;
-
-                    toast({
-                      title: "Success",
-                      description: "Resume uploaded successfully",
-                    });
-                  } catch (error) {
-                    toast({
-                      title: "Error",
-                      description: "Failed to upload resume",
-                      variant: "destructive",
-                    });
+                  if (file) {
+                    console.log('Resume file selected:', file.name);
+                    toast.success('Resume upload feature coming soon!');
                   }
                 }}
-                className="block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                className="bg-background border border-border rounded-md p-2 text-foreground"
               />
-              <p className="text-sm text-muted-foreground">
-                Upload a PDF file. This will replace any existing resume.
-              </p>
             </div>
-          </CardContent>
-        </Card>
-        <div className="space-y-6">
-          {projects.map((project) => (
-            <Card key={project.id} className="relative">
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-3">
-                      <CardTitle className="text-xl">{project.title}</CardTitle>
-                      {project.featured && (
-                        <Badge variant="secondary">Featured</Badge>
-                      )}
-                      <Badge className={getCategoryColor(project.category)}>
-                        {project.category.toUpperCase()}
-                      </Badge>
-                    </div>
-                    <CardDescription>{project.description}</CardDescription>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleReorder(project.id, 'up')}
-                      disabled={project.display_order === 1}
-                    >
-                      <ArrowUp className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleReorder(project.id, 'down')}
-                    >
-                      <ArrowDown className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleEdit(project)}
-                    >
-                      <Edit2 className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleDelete(project.id)}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
+
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold text-foreground">Projects ({projects.length})</h2>
+              
+              {projects.length === 0 ? (
+                <div className="text-center py-8 bg-card border border-border rounded-lg">
+                  <p className="text-muted-foreground">No projects found. Create your first project!</p>
                 </div>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {project.tags.map((tag) => (
-                    <Badge key={tag} variant="outline">{tag}</Badge>
+              ) : (
+                <div className="grid gap-4">
+                  {projects.map((project) => (
+                    <Card key={project.id} className="bg-card border-border">
+                      <CardContent className="p-6">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <h3 className="text-lg font-semibold text-foreground">{project.title}</h3>
+                              {project.featured && (
+                                <Badge className="bg-primary/20 text-primary border-primary/30">
+                                  Featured
+                                </Badge>
+                              )}
+                            </div>
+                            <p className="text-muted-foreground mb-3">{project.description}</p>
+                            <div className="flex flex-wrap gap-2 mb-3">
+                              {project.tags.map((tag) => (
+                                <Badge 
+                                  key={tag} 
+                                  variant="secondary" 
+                                  className={getCategoryColor(project.category)}
+                                >
+                                  {tag}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleReorder(project.id, 'up')}
+                              className="border-border hover:border-primary"
+                            >
+                              <ChevronUp className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleReorder(project.id, 'down')}
+                              className="border-border hover:border-primary"
+                            >
+                              <ChevronDown className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleEdit(project)}
+                              className="border-border hover:border-primary"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => handleDelete(project.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
                   ))}
                 </div>
-                {(project.link || project.github) && (
-                  <div className="mt-4 space-y-1 text-sm">
-                    {project.link && (
-                      <div className="text-muted-foreground">
-                        Live: <span className="text-primary">{project.link}</span>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold text-foreground">Certifications ({certifications.length})</h2>
+            
+            {certifications.length === 0 ? (
+              <div className="text-center py-8 bg-card border border-border rounded-lg">
+                <p className="text-muted-foreground">No certifications found. Add your first certification!</p>
+              </div>
+            ) : (
+              <div className="grid gap-4">
+                {certifications.map((cert) => (
+                  <Card key={cert.id} className="bg-card border-border">
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-4 flex-1">
+                          {cert.badge_image ? (
+                            <img
+                              src={cert.badge_image}
+                              alt={`${cert.name} badge`}
+                              className="w-16 h-16 object-contain"
+                            />
+                          ) : (
+                            <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center">
+                              <Award className="h-8 w-8 text-primary" />
+                            </div>
+                          )}
+                          <div className="flex-1">
+                            <h3 className="text-lg font-semibold text-foreground">{cert.name}</h3>
+                            <p className="text-muted-foreground">{cert.issuer}</p>
+                            <p className="text-sm text-muted-foreground">
+                              Earned: {new Date(cert.date_earned).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                              })}
+                            </p>
+                            {cert.verification_link && (
+                              <a 
+                                href={cert.verification_link} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-primary hover:underline text-sm"
+                              >
+                                View Verification
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleReorderCertification(cert.id, 'up')}
+                            className="border-border hover:border-primary"
+                          >
+                            <ChevronUp className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleReorderCertification(cert.id, 'down')}
+                            className="border-border hover:border-primary"
+                          >
+                            <ChevronDown className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEditCertification(cert)}
+                            className="border-border hover:border-primary"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => handleDeleteCertification(cert.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
-                    )}
-                    {project.github && (
-                      <div className="text-muted-foreground">
-                        GitHub: <span className="text-primary">{project.github}</span>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          ))}
-
-          {projects.length === 0 && (
-            <Card>
-              <CardContent className="text-center py-12">
-                <p className="text-muted-foreground">No projects found. Create your first project!</p>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
-      {showForm && (
-        <ProjectForm
-          project={editingProject}
-          onClose={handleCloseForm}
+      {/* Project Form Modal */}
+      {showProjectForm && (
+        <ProjectForm project={editingProject} onClose={handleCloseForm} />
+      )}
+
+      {/* Certification Form Modal */}
+      {showCertificationForm && (
+        <CertificationForm 
+          certification={editingCertification} 
+          onClose={handleCloseCertificationForm} 
         />
       )}
     </div>

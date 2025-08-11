@@ -95,14 +95,14 @@ const Certifications = () => {
                     <img
                       src={cert.badge_image}
                       alt={`${cert.name} badge`}
-                      className="w-24 h-24 object-contain transition-transform duration-300 group-hover:scale-110"
+                      className="w-28 h-28 md:w-32 md:h-32 object-contain transition-transform duration-300 group-hover:scale-110"
                       loading="lazy"
                     />
                   </div>
                 ) : (
                   <div className="mb-4 flex justify-center">
-                    <div className="w-24 h-24 bg-primary/20 rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
-                      <Award className="h-12 w-12 text-primary" />
+                    <div className="w-28 h-28 md:w-32 md:h-32 bg-primary/20 rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                      <Award className="h-14 w-14 md:h-16 md:w-16 text-primary" />
                     </div>
                   </div>
                 )}

@@ -70,7 +70,7 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
             </CardTitle>
           </div>
         </div>
-        <CardDescription className="text-muted-foreground mt-2 leading-relaxed">
+        <CardDescription className="text-muted-foreground mt-2 leading-relaxed whitespace-pre-line">
           {project.description}
         </CardDescription>
       </CardHeader>

@@ -123,7 +123,7 @@ export default function ProjectDetails() {
           </div>
 
           <h1 className="text-4xl font-bold text-foreground mb-4">{project.title}</h1>
-          <p className="text-xl text-muted-foreground mb-6">{project.description}</p>
+          <p className="text-xl text-muted-foreground mb-6 whitespace-pre-line">{project.description}</p>
 
           <div className="flex flex-wrap gap-2 mb-6">
             {project.tags.map((tag) => (

@@ -86,52 +86,58 @@ const Certifications = () => {
           {certifications.map((cert, index) => (
             <Card 
               key={cert.id} 
-              className="bg-gradient-card border-border/50 hover-lift group relative overflow-hidden animate-fade-in"
+              className="bg-gradient-card border-border/50 hover-lift group relative overflow-hidden animate-fade-in h-full"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <CardContent className="p-6 text-center">
-                {cert.badge_image ? (
-                  <div className="mb-4 flex justify-center">
-                    <img
-                      src={cert.badge_image}
-                      alt={`${cert.name} badge`}
-                      className="w-28 h-28 md:w-32 md:h-32 object-contain transition-transform duration-300 group-hover:scale-110"
-                      loading="lazy"
-                    />
-                  </div>
-                ) : (
-                  <div className="mb-4 flex justify-center">
-                    <div className="w-28 h-28 md:w-32 md:h-32 bg-primary/20 rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
-                      <Award className="h-14 w-14 md:h-16 md:w-16 text-primary" />
+              <CardContent className="p-6 text-center flex flex-col h-full">
+                <div className="flex-1">
+                  {cert.badge_image ? (
+                    <div className="mb-4 flex justify-center">
+                      <img
+                        src={cert.badge_image}
+                        alt={`${cert.name} badge`}
+                        className="w-28 h-28 md:w-32 md:h-32 object-contain transition-transform duration-300 group-hover:scale-110"
+                        loading="lazy"
+                      />
                     </div>
-                  </div>
-                )}
-                
-                <h3 className="font-semibold text-foreground mb-2 group-hover:text-primary transition-colors duration-300">
-                  {cert.name}
-                </h3>
-                
-                <Badge variant="secondary" className="mb-2 text-xs">
-                  {cert.issuer}
-                </Badge>
-                
-                <p className="text-sm text-muted-foreground mb-3">
-                  {formatDate(cert.date_earned)}
-                </p>
+                  ) : (
+                    <div className="mb-4 flex justify-center">
+                      <div className="w-28 h-28 md:w-32 md:h-32 bg-primary/20 rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                        <Award className="h-14 w-14 md:h-16 md:w-16 text-primary" />
+                      </div>
+                    </div>
+                  )}
+                  
+                  <h3 className="font-semibold text-foreground mb-2 group-hover:text-primary transition-colors duration-300">
+                    {cert.name}
+                  </h3>
+                  
+                  <Badge variant="secondary" className="mb-2 text-xs">
+                    {cert.issuer}
+                  </Badge>
+                  
+                  <p className="text-sm text-muted-foreground mb-3">
+                    {formatDate(cert.date_earned)}
+                  </p>
+                </div>
 
-                {cert.verification_link && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="w-full border-border hover:border-primary hover:bg-primary/10"
-                    asChild
-                  >
-                    <a href={cert.verification_link} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="h-3 w-3 mr-2" />
-                      Verify
-                    </a>
-                  </Button>
-                )}
+                <div className="mt-4">
+                  {cert.verification_link ? (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="w-full border-border hover:border-primary hover:bg-primary/10"
+                      asChild
+                    >
+                      <a href={cert.verification_link} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="h-3 w-3 mr-2" />
+                        Verify
+                      </a>
+                    </Button>
+                  ) : (
+                    <div className="h-9 md:h-10" aria-hidden />
+                  )}
+                </div>
               </CardContent>
             </Card>
           ))}

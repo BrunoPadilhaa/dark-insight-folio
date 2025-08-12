@@ -276,6 +276,11 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
                   <SelectItem value="power-bi">Power BI</SelectItem>
                   <SelectItem value="dbt">dbt</SelectItem>
                   <SelectItem value="sql">SQL</SelectItem>
+                  <SelectItem value="python">Python</SelectItem>
+                  <SelectItem value="web-development">Web Development</SelectItem>
+                  <SelectItem value="data-analysis">Data Analysis</SelectItem>
+                  <SelectItem value="machine-learning">Machine Learning</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
             </div>

@@ -1,9 +1,10 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, ExternalLink, Github } from "lucide-react";
+import { ArrowLeft, ExternalLink, Github, Edit } from "lucide-react";
 import { toast } from "sonner";
 import MDEditor from '@uiw/react-md-editor';
 
@@ -25,6 +26,7 @@ interface Project {
 export default function ProjectDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -72,6 +74,16 @@ export default function ProjectDetails() {
         return 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-300';
       case 'sql':
         return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300';
+      case 'python':
+        return 'bg-blue-200 text-blue-900 dark:bg-blue-800/20 dark:text-blue-400';
+      case 'web-development':
+        return 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-300';
+      case 'data-analysis':
+        return 'bg-teal-100 text-teal-800 dark:bg-teal-900/20 dark:text-teal-300';
+      case 'machine-learning':
+        return 'bg-pink-100 text-pink-800 dark:bg-pink-900/20 dark:text-pink-300';
+      case 'other':
+        return 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/20 dark:text-indigo-300';
       default:
         return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-300';
     }
@@ -148,6 +160,15 @@ export default function ProjectDetails() {
                   <Github className="h-4 w-4 mr-2" />
                   View Code
                 </a>
+              </Button>
+            )}
+            {user && (
+              <Button 
+                variant="secondary" 
+                onClick={() => navigate(`/admin/dashboard?edit=${project.id}`)}
+              >
+                <Edit className="h-4 w-4 mr-2" />
+                Edit Project
               </Button>
             )}
           </div>

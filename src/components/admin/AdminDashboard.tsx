@@ -47,6 +47,20 @@ export default function AdminDashboard() {
   const [editingCertification, setEditingCertification] = useState<Certification | null>(null);
   const [activeTab, setActiveTab] = useState<'projects' | 'certifications'>('projects');
 
+  // Check for edit parameter in URL
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const editId = urlParams.get('edit');
+    if (editId) {
+      const projectToEdit = projects.find(p => p.id === editId);
+      if (projectToEdit) {
+        handleEdit(projectToEdit);
+      }
+      // Clear the URL parameter
+      window.history.replaceState({}, '', '/admin/dashboard');
+    }
+  }, [projects]);
+
   useEffect(() => {
     fetchProjects();
     fetchCertifications();
@@ -191,6 +205,11 @@ export default function AdminDashboard() {
       case 'power-bi': return 'bg-yellow-500/20 text-yellow-300';
       case 'dbt': return 'bg-green-500/20 text-green-300';
       case 'sql': return 'bg-blue-500/20 text-blue-300';
+      case 'python': return 'bg-blue-600/20 text-blue-400';
+      case 'web-development': return 'bg-purple-500/20 text-purple-300';
+      case 'data-analysis': return 'bg-teal-500/20 text-teal-300';
+      case 'machine-learning': return 'bg-pink-500/20 text-pink-300';
+      case 'other': return 'bg-indigo-500/20 text-indigo-300';
       default: return 'bg-gray-500/20 text-gray-300';
     }
   };

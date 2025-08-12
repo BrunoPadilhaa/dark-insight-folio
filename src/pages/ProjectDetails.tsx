@@ -137,28 +137,12 @@ export default function ProjectDetails() {
           <h1 className="text-4xl font-bold text-foreground mb-4">{project.title}</h1>
           <p className="text-xl text-muted-foreground mb-6 whitespace-pre-line">{project.description}</p>
 
-          <div className="flex flex-wrap gap-2 mb-6">
-            {project.tags.map((tag) => (
-              <Badge key={tag} variant="outline">
-                {tag}
-              </Badge>
-            ))}
-          </div>
-
           <div className="flex gap-4">
             {project.link && (
               <Button asChild>
                 <a href={project.link} target="_blank" rel="noopener noreferrer">
                   <ExternalLink className="h-4 w-4 mr-2" />
                   View Live
-                </a>
-              </Button>
-            )}
-            {project.github && (
-              <Button variant="outline" asChild>
-                <a href={project.github} target="_blank" rel="noopener noreferrer">
-                  <Github className="h-4 w-4 mr-2" />
-                  View Code
                 </a>
               </Button>
             )}
@@ -188,6 +172,28 @@ export default function ProjectDetails() {
             </div>
           </div>
         )}
+
+        {/* Tags and View Code at the end */}
+        <div className="border-t border-border pt-8 mt-8 space-y-6">
+          <div className="flex flex-wrap gap-2">
+            {project.tags.map((tag) => (
+              <Badge key={tag} variant="outline">
+                {tag}
+              </Badge>
+            ))}
+          </div>
+
+          {project.github && (
+            <div className="flex justify-center">
+              <Button variant="outline" asChild>
+                <a href={project.github} target="_blank" rel="noopener noreferrer">
+                  <Github className="h-4 w-4 mr-2" />
+                  View Code
+                </a>
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

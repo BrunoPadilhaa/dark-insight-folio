@@ -94,19 +94,6 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
       </CardHeader>
 
       <CardContent className="pt-0 flex-1 flex flex-col">
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2 mb-6">
-          {project.tags.map((tag) => (
-            <Badge 
-              key={tag} 
-              variant="secondary" 
-              className="text-xs bg-secondary/50 text-secondary-foreground border-border/30"
-            >
-              {tag}
-            </Badge>
-          ))}
-        </div>
-
         {/* Action Buttons - Push to bottom */}
         <div className="flex gap-2 flex-wrap mt-auto">
           {project.link && (

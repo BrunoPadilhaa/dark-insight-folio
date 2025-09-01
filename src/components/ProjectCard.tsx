@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -30,6 +31,15 @@ interface ProjectCardProps {
 
 const ProjectCard = ({ project }: ProjectCardProps) => {
   const navigate = useNavigate();
+  const [isExpanded, setIsExpanded] = useState(false);
+  
+  // Truncate description if it's too long
+  const MAX_DESCRIPTION_LENGTH = 120;
+  const shouldTruncate = project.description.length > MAX_DESCRIPTION_LENGTH;
+  const displayDescription = shouldTruncate && !isExpanded 
+    ? project.description.substring(0, MAX_DESCRIPTION_LENGTH) + '...'
+    : project.description;
+  
   // Map image paths to imported images, or use uploaded URLs
   const getImageSrc = (imagePath: string) => {
     if (!imagePath) return powerbiImage; // fallback
@@ -41,7 +51,7 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
   };
 
   return (
-    <Card className="bg-gradient-card border-border/50 hover-lift group relative overflow-hidden">
+    <Card className="bg-gradient-card border-border/50 hover-lift group relative overflow-hidden h-full flex flex-col">
       {/* Featured Badge */}
       {project.featured && (
         <div className="absolute top-4 right-4 z-10">
@@ -62,7 +72,7 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
         <div className="absolute inset-0 bg-gradient-to-t from-card/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </div>
 
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-3 flex-shrink-0">
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <CardTitle className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors duration-300">
@@ -71,11 +81,19 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
           </div>
         </div>
         <CardDescription className="text-muted-foreground mt-2 leading-relaxed whitespace-pre-line">
-          {project.description}
+          {displayDescription}
+          {shouldTruncate && (
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="text-primary hover:text-primary/80 text-sm font-medium ml-1 transition-colors"
+            >
+              {isExpanded ? 'Read less' : 'Read more'}
+            </button>
+          )}
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="pt-0">
+      <CardContent className="pt-0 flex-1 flex flex-col">
         {/* Tags */}
         <div className="flex flex-wrap gap-2 mb-6">
           {project.tags.map((tag) => (
@@ -89,8 +107,8 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
           ))}
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex gap-2 flex-wrap">
+        {/* Action Buttons - Push to bottom */}
+        <div className="flex gap-2 flex-wrap mt-auto">
           {project.link && (
             <Button 
               size="sm" 

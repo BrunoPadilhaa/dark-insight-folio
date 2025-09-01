@@ -16,6 +16,7 @@ interface Project {
   has_details: boolean;
   details_content?: string;
   details_images?: string[];
+  published: boolean;
 }
 
 const Projects = () => {
@@ -39,6 +40,7 @@ const Projects = () => {
       const { data, error } = await supabase
         .from('projects')
         .select('*')
+        .eq('published', true)
         .order('display_order', { ascending: true });
 
       if (error) throw error;

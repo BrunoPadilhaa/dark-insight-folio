@@ -24,6 +24,7 @@ interface Project {
   has_details: boolean;
   details_content?: string;
   details_images?: string[];
+  published: boolean;
 }
 
 interface Certification {
@@ -318,6 +319,11 @@ export default function AdminDashboard() {
                               {project.featured && (
                                 <Badge className="bg-primary/20 text-primary border-primary/30">
                                   Featured
+                                </Badge>
+                              )}
+                              {!project.published && (
+                                <Badge variant="secondary" className="bg-orange-500/20 text-orange-300 border-orange-500/30">
+                                  Unpublished
                                 </Badge>
                               )}
                             </div>

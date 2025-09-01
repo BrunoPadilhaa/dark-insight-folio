@@ -25,6 +25,7 @@ interface Project {
   has_details: boolean;
   details_content?: string;
   details_images?: string[];
+  published: boolean;
 }
 
 interface ProjectFormProps {
@@ -45,6 +46,7 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
     has_details: false,
     details_content: '',
     details_images: [] as string[],
+    published: true,
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
@@ -65,6 +67,7 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
         has_details: project.has_details,
         details_content: project.details_content || '',
         details_images: project.details_images || [],
+        published: project.published,
       });
       setImagePreview(project.image || '');
     }
@@ -165,6 +168,7 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
         has_details: formData.has_details,
         details_content: formData.details_content || null,
         details_images: formData.details_images,
+        published: formData.published,
       };
 
       if (project) {
@@ -384,6 +388,17 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
                 }
               />
               <Label htmlFor="has_details">Has detailed page</Label>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="published"
+                checked={formData.published}
+                onCheckedChange={(checked) => 
+                  setFormData(prev => ({ ...prev, published: checked as boolean }))
+                }
+              />
+              <Label htmlFor="published">Published (visible to public)</Label>
             </div>
 
             {formData.has_details && (

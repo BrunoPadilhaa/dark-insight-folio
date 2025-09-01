@@ -24,12 +24,18 @@ const Projects = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const categories = [
-    { id: 'all', label: 'All Projects' },
-    { id: 'power-bi', label: 'Power BI' },
-    { id: 'dbt', label: 'dbt' },
-    { id: 'sql', label: 'SQL' }
-  ];
+  // Get unique tags from all projects
+  const getAvailableTags = () => {
+    const allTags = projects.flatMap(project => project.tags);
+    const uniqueTags = [...new Set(allTags)];
+    return [
+      { id: 'all', label: 'All Projects' },
+      ...uniqueTags.map(tag => ({
+        id: tag.toLowerCase().replace(/\s+/g, '-'),
+        label: tag
+      }))
+    ];
+  };
 
   useEffect(() => {
     fetchProjects();
@@ -54,7 +60,13 @@ const Projects = () => {
 
   const filteredProjects = activeFilter === 'all' 
     ? projects 
-    : projects.filter(project => project.category === activeFilter);
+    : projects.filter(project => 
+        project.tags.some(tag => 
+          tag.toLowerCase().replace(/\s+/g, '-') === activeFilter
+        )
+      );
+
+  const availableTags = getAvailableTags();
 
   return (
     <section id="projects" className="py-20 bg-background">
@@ -72,20 +84,20 @@ const Projects = () => {
 
         {/* Filter Buttons */}
         <div className="flex flex-wrap justify-center gap-3 mb-12 animate-slide-up">
-          {categories.map((category) => (
+          {availableTags.map((tag) => (
             <Button
-              key={category.id}
-              variant={activeFilter === category.id ? "default" : "outline"}
+              key={tag.id}
+              variant={activeFilter === tag.id ? "default" : "outline"}
               className={`
                 px-6 py-2 rounded-full transition-all duration-300
-                ${activeFilter === category.id 
+                ${activeFilter === tag.id 
                   ? 'bg-primary text-primary-foreground shadow-lg' 
                   : 'border-border hover:border-primary hover:bg-primary/10'
                 }
               `}
-              onClick={() => setActiveFilter(category.id)}
+              onClick={() => setActiveFilter(tag.id)}
             >
-              {category.label}
+              {tag.label}
             </Button>
           ))}
         </div>

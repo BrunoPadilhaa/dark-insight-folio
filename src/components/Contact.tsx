@@ -45,11 +45,10 @@ const Contact = () => {
           {/* Section Header */}
           <div className="text-center mb-16 animate-fade-in">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
-              Let's Work Together
+              Contact
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Ready to transform your data into actionable insights? I'm always excited to discuss 
-              new opportunities and collaborate on innovative BI projects.
+              Get in touch to discuss your project needs and how we can work together.
             </p>
           </div>
 
@@ -86,9 +85,6 @@ const Contact = () => {
 
           {/* CTA Section */}
           <div className="text-center bg-gradient-card rounded-2xl p-8 border border-border/50 animate-fade-in">
-            <h3 className="text-2xl font-bold text-foreground mb-4">
-              Ready to Start a Project?
-            </h3>
             <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
               Whether you need a complex dashboard, data pipeline optimization, or strategic 
               analytics consulting, I'm here to help bring your vision to life.

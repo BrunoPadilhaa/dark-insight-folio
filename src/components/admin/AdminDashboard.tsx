@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Plus, Edit, Trash2, LogOut, ChevronUp, ChevronDown, Home, Award } from 'lucide-react';
+import { Plus, Edit, Trash2, LogOut, ChevronUp, ChevronDown, Home, Award, Eye, EyeOff } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ProjectForm from './ProjectForm';
 import CertificationForm from './CertificationForm';
@@ -144,6 +144,22 @@ export default function AdminDashboard() {
   const handleEdit = (project: Project) => {
     setEditingProject(project);
     setShowProjectForm(true);
+  };
+
+  const handleTogglePublished = async (id: string, currentStatus: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('projects')
+        .update({ published: !currentStatus })
+        .eq('id', id);
+
+      if (error) throw error;
+      toast.success(`Project ${!currentStatus ? 'published' : 'hidden'} successfully`);
+      fetchProjects();
+    } catch (error) {
+      console.error('Error toggling project visibility:', error);
+      toast.error('Failed to update project visibility');
+    }
   };
 
   const handleCloseForm = () => {
@@ -341,6 +357,17 @@ export default function AdminDashboard() {
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleTogglePublished(project.id, project.published)}
+                              className={`border-border hover:border-primary ${
+                                project.published ? 'text-green-600' : 'text-orange-600'
+                              }`}
+                              title={project.published ? 'Hide project' : 'Show project'}
+                            >
+                              {project.published ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                            </Button>
                             <Button
                               variant="outline"
                               size="sm"

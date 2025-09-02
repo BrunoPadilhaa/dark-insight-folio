@@ -5,10 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Plus, Edit, Trash2, LogOut, ChevronUp, ChevronDown, Home, Award, Eye, EyeOff } from 'lucide-react';
+import { Plus, Edit, Trash2, LogOut, ChevronUp, ChevronDown, Home, Award, Eye, EyeOff, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ProjectForm from './ProjectForm';
 import CertificationForm from './CertificationForm';
+import AboutContentForm from './AboutContentForm';
 
 interface Project {
   id: string;
@@ -44,6 +45,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [showProjectForm, setShowProjectForm] = useState(false);
   const [showCertificationForm, setShowCertificationForm] = useState(false);
+  const [showAboutContentForm, setShowAboutContentForm] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [editingCertification, setEditingCertification] = useState<Certification | null>(null);
   const [activeTab, setActiveTab] = useState<'projects' | 'certifications'>('projects');
@@ -164,8 +166,10 @@ export default function AdminDashboard() {
 
   const handleCloseForm = () => {
     setShowProjectForm(false);
+    setShowCertificationForm(false);
+    setShowAboutContentForm(false);
     setEditingProject(null);
-    fetchProjects();
+    setEditingCertification(null);
   };
 
   const handleDeleteCertification = async (id: string) => {
@@ -280,6 +284,13 @@ export default function AdminDashboard() {
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Add {activeTab === 'projects' ? 'Project' : 'Certification'}
+              </Button>
+              <Button
+                onClick={() => setShowAboutContentForm(true)}
+                className="bg-purple-600 hover:bg-purple-700 text-white"
+              >
+                <FileText className="h-4 w-4 mr-2" />
+                Edit About Content
               </Button>
               <Link to="/">
                 <Button variant="outline" className="flex items-center gap-2">
@@ -498,6 +509,9 @@ export default function AdminDashboard() {
           </div>
         )}
       </div>
+
+      {/* About Content Form Modal */}
+      {showAboutContentForm && <AboutContentForm onClose={handleCloseForm} />}
 
       {/* Project Form Modal */}
       {showProjectForm && (

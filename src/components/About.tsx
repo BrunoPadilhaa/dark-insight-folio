@@ -1,8 +1,45 @@
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { BarChart3, Database, TrendingUp, Zap } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+
+interface AboutContent {
+  id: string;
+  section: string;
+  title?: string;
+  subtitle?: string;
+  content?: string;
+}
 
 const About = () => {
+  const [aboutContent, setAboutContent] = useState<AboutContent[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchAboutContent();
+  }, []);
+
+  const fetchAboutContent = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('about_content')
+        .select('*')
+        .order('section');
+
+      if (error) throw error;
+      setAboutContent(data || []);
+    } catch (error) {
+      console.error('Error fetching about content:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getContentBySection = (section: string) => {
+    return aboutContent.find(content => content.section === section);
+  };
+
   const skills = [
     'Power BI', 'Tableau', 'SQL', 'Python', 'dbt', 'Snowflake', 
     'PostgreSQL', 'DAX', 'ETL/ELT', 'Data Modeling', 'Azure', 'AWS'
@@ -31,6 +68,22 @@ const About = () => {
     }
   ];
 
+  const headerContent = getContentBySection('header');
+  const storyContent = getContentBySection('story');
+  const skillsContent = getContentBySection('skills');
+
+  if (loading) {
+    return (
+      <section id="about" className="py-20 bg-secondary/20">
+        <div className="container mx-auto px-6">
+          <div className="max-w-6xl mx-auto text-center">
+            <div className="text-xl text-muted-foreground">Loading...</div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section id="about" className="py-20 bg-secondary/20">
       <div className="container mx-auto px-6">
@@ -38,11 +91,10 @@ const About = () => {
           {/* Section Header */}
           <div className="text-center mb-16 animate-fade-in">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
-              About Me
+              {headerContent?.title || 'About Me'}
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Passionate about transforming data into strategic business value through innovative 
-              analytics solutions and cutting-edge business intelligence tools.
+              {headerContent?.subtitle || 'Passionate about transforming data into strategic business value.'}
             </p>
           </div>
 
@@ -50,28 +102,37 @@ const About = () => {
             {/* Left Column - Story */}
             <div className="animate-slide-up">
               <div className="prose prose-lg max-w-none">
-                <p className="text-muted-foreground leading-relaxed mb-6">
-                  With over <span className="text-primary font-semibold">5 years of experience</span> in 
-                  Business Intelligence and Data Analytics, I specialize in creating data-driven solutions 
-                  that empower organizations to make informed decisions.
-                </p>
-                
-                <p className="text-muted-foreground leading-relaxed mb-6">
-                  My expertise spans from building comprehensive Power BI dashboards to designing 
-                  scalable data warehouses with dbt. I'm passionate about clean code, efficient 
-                  processes, and delivering insights that matter.
-                </p>
+                {storyContent?.content ? (
+                  storyContent.content.split('\n\n').map((paragraph, index) => (
+                    <p key={index} className="text-muted-foreground leading-relaxed mb-6" 
+                       dangerouslySetInnerHTML={{ __html: paragraph }} />
+                  ))
+                ) : (
+                  <>
+                    <p className="text-muted-foreground leading-relaxed mb-6">
+                      With over <span className="text-primary font-semibold">5 years of experience</span> in 
+                      Business Intelligence and Data Analytics, I specialize in creating data-driven solutions 
+                      that empower organizations to make informed decisions.
+                    </p>
+                    
+                    <p className="text-muted-foreground leading-relaxed mb-6">
+                      My expertise spans from building comprehensive Power BI dashboards to designing 
+                      scalable data warehouses with dbt. I'm passionate about clean code, efficient 
+                      processes, and delivering insights that matter.
+                    </p>
 
-                <p className="text-muted-foreground leading-relaxed mb-8">
-                  When I'm not working with data, you'll find me exploring the latest BI tools, 
-                  contributing to open-source projects, or sharing knowledge with the data community.
-                </p>
+                    <p className="text-muted-foreground leading-relaxed mb-8">
+                      When I'm not working with data, you'll find me exploring the latest BI tools, 
+                      contributing to open-source projects, or sharing knowledge with the data community.
+                    </p>
+                  </>
+                )}
               </div>
 
               {/* Skills */}
               <div>
                 <h3 className="text-xl font-semibold mb-4 text-foreground">
-                  Technical Skills
+                  {skillsContent?.title || 'Technical Skills'}
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {skills.map((skill) => (

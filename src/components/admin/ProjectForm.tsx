@@ -9,7 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/hooks/use-toast';
 import { X, Upload, ImageIcon } from 'lucide-react';
-import MDEditor from '@uiw/react-md-editor';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 interface Project {
   id: string;
@@ -404,52 +405,92 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
             {formData.has_details && (
               <>
                 <div className="space-y-2">
-                  <Label htmlFor="details_content">Project Details (Markdown)</Label>
+                  <Label htmlFor="details_content">Project Details</Label>
                   <div className="border border-border rounded-lg overflow-hidden">
-                    <MDEditor
+                    <ReactQuill
                       value={formData.details_content}
-                      onChange={(val) => setFormData(prev => ({ ...prev, details_content: val || '' }))}
-                      preview="edit"
-                      hideToolbar={false}
-                      height={300}
-                      data-color-mode="light"
-                      commands={[
-                        // Add custom image upload command
-                        {
-                          name: 'image-upload',
-                          keyCommand: 'image-upload',
-                          buttonProps: { 'aria-label': 'Upload image' },
-                          icon: (
-                            <Upload className="w-4 h-4" />
-                          ),
-                          execute: async (state, api) => {
-                            const input = document.createElement('input');
-                            input.type = 'file';
-                            input.accept = 'image/*';
-                            input.onchange = async (e) => {
-                              const file = (e.target as HTMLInputElement).files?.[0];
-                              if (file) {
-                                setUploading(true);
-                                const imageUrl = await uploadContentImage(file);
-                                setUploading(false);
-                                if (imageUrl) {
-                                  const modifyText = `![Image](${imageUrl})`;
-                                  api.replaceSelection(modifyText);
-                                }
-                              }
-                            };
-                            input.click();
-                          },
-                        },
+                      onChange={(value) => setFormData(prev => ({ ...prev, details_content: value }))}
+                      style={{ height: '300px', marginBottom: '42px' }}
+                      modules={{
+                        toolbar: [
+                          [{ 'header': [1, 2, 3, false] }],
+                          ['bold', 'italic', 'underline', 'strike'],
+                          [{ 'color': [] }, { 'background': [] }],
+                          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                          [{ 'indent': '-1'}, { 'indent': '+1' }],
+                          [{ 'align': [] }],
+                          ['link', 'image'],
+                          ['blockquote', 'code-block'],
+                          ['clean']
+                        ],
+                        imageUploader: {
+                          upload: async (file: File) => {
+                            setUploading(true);
+                            const imageUrl = await uploadContentImage(file);
+                            setUploading(false);
+                            return imageUrl;
+                          }
+                        }
+                      }}
+                      formats={[
+                        'header', 'bold', 'italic', 'underline', 'strike',
+                        'color', 'background', 'list', 'bullet', 'indent',
+                        'align', 'link', 'image', 'blockquote', 'code-block'
                       ]}
+                      theme="snow"
+                      placeholder="Write your project details here..."
                     />
                   </div>
                   {uploading && (
                     <p className="text-sm text-muted-foreground">Uploading image...</p>
                   )}
-                  <p className="text-sm text-muted-foreground">
-                    Use markdown to format your content. Click the upload button to add images inline.
-                  </p>
+                  <div className="space-y-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const input = document.createElement('input');
+                        input.type = 'file';
+                        input.accept = 'image/*';
+                        input.onchange = async (e) => {
+                          const file = (e.target as HTMLInputElement).files?.[0];
+                          if (file) {
+                            setUploading(true);
+                            const imageUrl = await uploadContentImage(file);
+                            setUploading(false);
+                            if (imageUrl) {
+                              // Insert image HTML directly into Quill editor
+                              const quillEditor = document.querySelector('.ql-editor') as HTMLElement;
+                              if (quillEditor) {
+                                const range = window.getSelection()?.getRangeAt(0);
+                                const img = document.createElement('img');
+                                img.src = imageUrl;
+                                img.style.maxWidth = '100%';
+                                img.style.height = 'auto';
+                                if (range) {
+                                  range.insertNode(img);
+                                } else {
+                                  quillEditor.appendChild(img);
+                                }
+                                // Update the form data
+                                const updatedContent = quillEditor.innerHTML;
+                                setFormData(prev => ({ ...prev, details_content: updatedContent }));
+                              }
+                            }
+                          }
+                        };
+                        input.click();
+                      }}
+                      className="flex items-center gap-2"
+                    >
+                      <Upload className="w-4 h-4" />
+                      Upload Image
+                    </Button>
+                    <p className="text-sm text-muted-foreground">
+                      Use the toolbar to format text with bold, italic, headers, lists, and more. Click "Upload Image" to add images.
+                    </p>
+                  </div>
                 </div>
               </>
             )}

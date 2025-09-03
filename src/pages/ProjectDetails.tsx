@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, ExternalLink, Github, Edit } from "lucide-react";
 import { toast } from "sonner";
-import MDEditor from '@uiw/react-md-editor';
 
 interface Project {
   id: string;
@@ -158,13 +157,10 @@ export default function ProjectDetails() {
         {/* Details Content */}
         {project.details_content && (
           <div className="mb-8">
-            <div className="prose prose-gray dark:prose-invert max-w-none">
-              <MDEditor.Markdown 
-                source={project.details_content} 
-                className="bg-transparent"
-                data-color-mode="light"
-              />
-            </div>
+            <div 
+              className="prose prose-gray dark:prose-invert max-w-none"
+              dangerouslySetInnerHTML={{ __html: project.details_content }}
+            />
           </div>
         )}
 

@@ -134,10 +134,7 @@ export default function ProjectDetails() {
             )}
           </div>
 
-          <h1 className="text-4xl font-bold text-foreground mb-4">{project.title}</h1>
-          <p className="text-xl text-muted-foreground mb-6 whitespace-pre-line">{project.description}</p>
-
-          <div className="flex gap-4">
+          <div className="flex gap-4 mb-8">
             {project.link && (
               <Button asChild>
                 <a href={project.link} target="_blank" rel="noopener noreferrer">
@@ -158,11 +155,9 @@ export default function ProjectDetails() {
           </div>
         </div>
 
-
         {/* Details Content */}
         {project.details_content && (
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-foreground mb-4">Project Details</h2>
             <div className="prose prose-gray dark:prose-invert max-w-none">
               <MDEditor.Markdown 
                 source={project.details_content} 

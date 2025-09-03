@@ -35,6 +35,7 @@ interface ProjectFormProps {
 }
 
 export default function ProjectForm({ project, onClose }: ProjectFormProps) {
+  console.log('ProjectForm rendering with project:', project);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -422,15 +423,7 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
                           ['link', 'image'],
                           ['blockquote', 'code-block'],
                           ['clean']
-                        ],
-                        imageUploader: {
-                          upload: async (file: File) => {
-                            setUploading(true);
-                            const imageUrl = await uploadContentImage(file);
-                            setUploading(false);
-                            return imageUrl;
-                          }
-                        }
+                        ]
                       }}
                       formats={[
                         'header', 'bold', 'italic', 'underline', 'strike',

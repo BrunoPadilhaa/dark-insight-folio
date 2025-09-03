@@ -144,8 +144,10 @@ export default function AdminDashboard() {
   };
 
   const handleEdit = (project: Project) => {
+    console.log('Edit button clicked, project:', project);
     setEditingProject(project);
     setShowProjectForm(true);
+    console.log('showProjectForm set to true');
   };
 
   const handleTogglePublished = async (id: string, currentStatus: boolean) => {

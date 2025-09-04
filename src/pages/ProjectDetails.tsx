@@ -113,11 +113,11 @@ export default function ProjectDetails() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-4">
         <Button
           variant="ghost"
           onClick={() => navigate('/')}
-          className="mb-8 text-muted-foreground hover:text-foreground"
+          className="mb-4 text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Portfolio
@@ -126,24 +126,19 @@ export default function ProjectDetails() {
 
       {/* Project Details Section */}
       {project.details_content && (
-        <section className="py-20 bg-secondary/20">
+        <section className="py-8 bg-secondary/20">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
-              <div className="text-center mb-16 animate-fade-in">
-                <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
-                  Project Details
+              <div className="text-center mb-8 animate-fade-in">
+                <h2 className="text-2xl md:text-3xl font-bold mb-4 bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
+                  {project.title}
                 </h2>
               </div>
               
               <Card className="bg-gradient-card border-border/50 animate-slide-up">
-                <CardContent className="p-8">
+                <CardContent className="p-6">
                   <div 
-                    className="prose prose-lg dark:prose-invert max-w-none
-                               prose-headings:text-foreground prose-p:text-muted-foreground 
-                               prose-strong:text-foreground prose-li:text-muted-foreground
-                               prose-a:text-primary hover:prose-a:text-primary/80
-                               prose-blockquote:text-muted-foreground prose-blockquote:border-primary/30
-                               prose-code:text-primary prose-pre:bg-muted/50"
+                    className="prose prose-base dark:prose-invert max-w-none"
                     dangerouslySetInnerHTML={{ __html: project.details_content }}
                   />
                 </CardContent>
@@ -154,15 +149,15 @@ export default function ProjectDetails() {
       )}
 
       {/* Tags and Additional Info Section */}
-      <section className="py-20 bg-background">
+      <section className="py-8 bg-background">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h3 className="text-2xl font-semibold mb-8 text-foreground">Technologies Used</h3>
-            <div className="flex flex-wrap justify-center gap-3 mb-12">
+            <h3 className="text-xl font-semibold mb-6 text-foreground">Technologies Used</h3>
+            <div className="flex flex-wrap justify-center gap-2 mb-8">
               {project.tags.map((tag) => (
                 <Badge 
                   key={tag} 
-                  className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 transition-colors px-4 py-2 text-sm"
+                  className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 transition-colors px-3 py-1 text-sm"
                 >
                   {tag}
                 </Badge>

@@ -158,12 +158,7 @@ export default function ProjectDetails() {
         {project.details_content && (
           <div className="mb-8">
             <div 
-              className="prose prose-lg prose-gray dark:prose-invert max-w-none
-                         prose-headings:text-foreground prose-p:text-muted-foreground 
-                         prose-strong:text-foreground prose-code:text-foreground
-                         prose-blockquote:text-muted-foreground prose-blockquote:border-border
-                         prose-pre:bg-muted prose-pre:text-foreground
-                         prose-li:text-muted-foreground prose-a:text-primary hover:prose-a:text-primary/80"
+              className="prose prose-lg dark:prose-invert max-w-none"
               dangerouslySetInnerHTML={{ __html: project.details_content }}
             />
           </div>

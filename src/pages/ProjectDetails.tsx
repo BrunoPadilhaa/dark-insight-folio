@@ -113,82 +113,16 @@ export default function ProjectDetails() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section with Project Info */}
-      <section className="bg-gradient-hero relative overflow-hidden">
-        {/* Background Elements */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-10" />
-        <div className="absolute top-20 right-20 w-72 h-72 bg-primary/5 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 left-20 w-96 h-96 bg-primary/3 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-        
-        <div className="container mx-auto px-4 py-20 relative z-10">
-          <Button
-            variant="ghost"
-            onClick={() => navigate('/')}
-            className="mb-8 text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Portfolio
-          </Button>
-          
-          <div className="text-center animate-fade-in">
-            <div className="flex justify-center gap-2 mb-6">
-              <Badge className={getCategoryColor(project.category)}>
-                {project.category.replace('-', ' ').toUpperCase()}
-              </Badge>
-              {project.featured && (
-                <Badge variant="secondary">Featured</Badge>
-              )}
-            </div>
-
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">
-              {project.title}
-            </h1>
-
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8 leading-relaxed">
-              {project.description}
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              {project.link && (
-                <Button 
-                  size="lg" 
-                  className="bg-gradient-primary hover:opacity-90 text-white font-medium px-8 py-4 text-lg hover-glow"
-                  asChild
-                >
-                  <a href={project.link} target="_blank" rel="noopener noreferrer">
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    View Live Demo
-                  </a>
-                </Button>
-              )}
-              {project.github && (
-                <Button 
-                  variant="outline" 
-                  size="lg" 
-                  className="border-primary text-primary hover:bg-primary hover:text-white px-8 py-4 text-lg transition-all duration-300"
-                  asChild
-                >
-                  <a href={project.github} target="_blank" rel="noopener noreferrer">
-                    <Github className="h-4 w-4 mr-2" />
-                    View Code
-                  </a>
-                </Button>
-              )}
-              {user && (
-                <Button 
-                  variant="ghost"
-                  size="lg"
-                  onClick={() => navigate(`/admin/dashboard?edit=${project.id}`)}
-                  className="px-8 py-4 text-lg"
-                >
-                  <Edit className="h-4 w-4 mr-2" />
-                  Edit Project
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
+      <div className="container mx-auto px-4 py-8">
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/')}
+          className="mb-8 text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Portfolio
+        </Button>
+      </div>
 
       {/* Project Details Section */}
       {project.details_content && (

@@ -8,12 +8,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { toast } from '@/hooks/use-toast';
 
 export default function LoginPage() {
-  const { user, signIn, loading } = useAuth();
+  const { user, signIn, loading, isAdmin, adminLoading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  if (loading) {
+  if (loading || (user && adminLoading)) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
@@ -21,8 +21,32 @@ export default function LoginPage() {
     );
   }
 
-  if (user) {
+  if (user && isAdmin) {
     return <Navigate to="/admin/dashboard" replace />;
+  }
+
+  if (user && !adminLoading && !isAdmin) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-destructive">Access Denied</CardTitle>
+            <CardDescription>
+              You don't have admin privileges to access this area.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-center">
+            <Button 
+              onClick={() => window.location.href = '/'}
+              variant="outline"
+              className="w-full"
+            >
+              Return to Home
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   const handleSubmit = async (e: React.FormEvent) => {

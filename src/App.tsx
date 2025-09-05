@@ -10,6 +10,7 @@ import ProjectDetails from "./pages/ProjectDetails";
 import Certifications from "./pages/Certifications";
 import LoginPage from "./components/admin/LoginPage";
 import AdminDashboard from "./components/admin/AdminDashboard";
+import AdminSetup from "./components/admin/AdminSetup";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/project/:id" element={<ProjectDetails />} />
             <Route path="/certifications" element={<Certifications />} />
             <Route path="/admin/login" element={<LoginPage />} />
+            <Route path="/admin/setup" element={<AdminSetup />} />
             <Route path="/admin/dashboard" element={
               <ProtectedRoute>
                 <AdminDashboard />

@@ -30,12 +30,21 @@ export default function LoginPage() {
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold text-destructive">Access Denied</CardTitle>
+            <CardTitle className="text-2xl font-bold">Account Created!</CardTitle>
             <CardDescription>
-              You don't have admin privileges to access this area.
+              You're signed in but don't have admin privileges yet.
             </CardDescription>
           </CardHeader>
-          <CardContent className="text-center">
+          <CardContent className="text-center space-y-4">
+            <p className="text-sm text-muted-foreground">
+              To get admin access, visit the setup page:
+            </p>
+            <Button 
+              onClick={() => window.location.href = '/admin/setup'}
+              className="w-full"
+            >
+              Go to Admin Setup
+            </Button>
             <Button 
               onClick={() => window.location.href = '/'}
               variant="outline"

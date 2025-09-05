@@ -117,7 +117,14 @@ export default function AdminSetup() {
           </form>
           <div className="mt-6 p-4 bg-muted rounded-lg">
             <p className="text-xs text-muted-foreground">
-              <strong>Note:</strong> This is a one-time setup. You must have already created an account to use this feature.
+              <strong>Important:</strong> You must first create an account before using this setup. If you haven't signed up yet, please{' '}
+              <button 
+                onClick={() => window.location.href = '/admin/login'}
+                className="text-primary hover:underline font-medium"
+              >
+                sign up here
+              </button>{' '}
+              first, then return to this page.
             </p>
           </div>
         </CardContent>

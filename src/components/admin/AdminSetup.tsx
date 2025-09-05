@@ -90,6 +90,21 @@ export default function AdminSetup() {
           <CardDescription>
             Grant admin privileges to your user account
           </CardDescription>
+          <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+            <p className="text-sm text-yellow-800 dark:text-yellow-200 font-medium">
+              ⚠️ You must create an account first!
+            </p>
+            <p className="text-xs text-yellow-700 dark:text-yellow-300 mt-1">
+              Go to{' '}
+              <button 
+                onClick={() => window.location.href = '/admin/login'}
+                className="underline font-medium hover:no-underline"
+              >
+                /admin/login
+              </button>{' '}
+              to sign up, then return here.
+            </p>
+          </div>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">

@@ -138,7 +138,7 @@ export default function ProjectDetails() {
               <Card className="bg-gradient-card border-border/50 animate-slide-up">
                 <CardContent className="p-6">
                   <div 
-                    className="prose prose-base dark:prose-invert max-w-none"
+                    className="max-w-none text-foreground [&_*]:text-inherit"
                     dangerouslySetInnerHTML={{ __html: project.details_content }}
                   />
                 </CardContent>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -55,6 +55,22 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
 
+  // Prevent modal from closing when navigating away or switching tabs
+  const handleBeforeUnload = useCallback((e: BeforeUnloadEvent) => {
+    // Show confirmation dialog when trying to navigate away
+    e.preventDefault();
+    e.returnValue = 'You have unsaved changes in the project form. Are you sure you want to leave?';
+    return 'You have unsaved changes in the project form. Are you sure you want to leave?';
+  }, []);
+
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    // Prevent ESC key from closing modal accidentally
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }, []);
+
   useEffect(() => {
     if (project) {
       setFormData({
@@ -73,7 +89,16 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
       });
       setImagePreview(project.image || '');
     }
-  }, [project]);
+
+    // Add event listeners to prevent modal from closing unexpectedly
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [project, handleBeforeUnload, handleKeyDown]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -227,8 +252,17 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div 
+      className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+      onClick={(e) => {
+        // Prevent modal from closing when clicking outside
+        e.stopPropagation();
+      }}
+    >
+      <Card 
+        className="w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
@@ -237,7 +271,17 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
                 {project ? 'Update project details' : 'Create a new portfolio project'}
               </CardDescription>
             </div>
-            <Button variant="ghost" size="sm" onClick={onClose}>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (confirm('Are you sure you want to close? Any unsaved changes will be lost.')) {
+                  onClose();
+                }
+              }}
+            >
               <X className="w-4 h-4" />
             </Button>
           </div>

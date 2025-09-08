@@ -54,6 +54,7 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
   const [imagePreview, setImagePreview] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [quillRef, setQuillRef] = useState<ReactQuill | null>(null);
 
   // Prevent modal from closing when navigating away or switching tabs
   const handleBeforeUnload = useCallback((e: BeforeUnloadEvent) => {
@@ -449,85 +450,109 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
 
             {formData.has_details && (
               <>
-                <div className="space-y-2">
-                  <Label htmlFor="details_content">Project Details</Label>
-                  <div className="border border-border rounded-lg overflow-hidden">
-                    <ReactQuill
-                      value={formData.details_content}
-                      onChange={(value) => setFormData(prev => ({ ...prev, details_content: value }))}
-                      style={{ height: '300px', marginBottom: '42px' }}
-                      modules={{
-                        toolbar: [
-                          [{ 'header': [1, 2, 3, false] }],
-                          ['bold', 'italic', 'underline', 'strike'],
-                          [{ 'color': [] }, { 'background': [] }],
-                          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                          [{ 'indent': '-1'}, { 'indent': '+1' }],
-                          [{ 'align': [] }],
-                          ['link', 'image'],
-                          ['blockquote', 'code-block'],
-                          ['clean']
-                        ]
-                      }}
-                      formats={[
-                        'header', 'bold', 'italic', 'underline', 'strike',
-                        'color', 'background', 'list', 'bullet', 'indent',
-                        'align', 'link', 'image', 'blockquote', 'code-block'
-                      ]}
-                      theme="snow"
-                      placeholder="Write your project details here..."
-                    />
-                  </div>
-                  {uploading && (
-                    <p className="text-sm text-muted-foreground">Uploading image...</p>
-                  )}
                   <div className="space-y-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        const input = document.createElement('input');
-                        input.type = 'file';
-                        input.accept = 'image/*';
-                        input.onchange = async (e) => {
-                          const file = (e.target as HTMLInputElement).files?.[0];
-                          if (file) {
-                            setUploading(true);
-                            const imageUrl = await uploadContentImage(file);
-                            setUploading(false);
-                            if (imageUrl) {
-                              // Insert image HTML directly into Quill editor
-                              const quillEditor = document.querySelector('.ql-editor') as HTMLElement;
-                              if (quillEditor) {
-                                const range = window.getSelection()?.getRangeAt(0);
-                                const img = document.createElement('img');
-                                img.src = imageUrl;
-                                img.style.maxWidth = '100%';
-                                img.style.height = 'auto';
-                                if (range) {
-                                  range.insertNode(img);
-                                } else {
-                                  quillEditor.appendChild(img);
-                                }
-                                // Update the form data
-                                const updatedContent = quillEditor.innerHTML;
-                                setFormData(prev => ({ ...prev, details_content: updatedContent }));
+                    <Label htmlFor="details_content">Project Details</Label>
+                    <div className="border border-border rounded-lg overflow-hidden bg-background">
+                      <ReactQuill
+                        ref={(ref) => setQuillRef(ref)}
+                        value={formData.details_content}
+                        onChange={(value, delta, source, editor) => {
+                          setFormData(prev => ({ ...prev, details_content: value }));
+                        }}
+                        style={{ 
+                          height: '400px', 
+                          marginBottom: '42px',
+                        }}
+                        modules={{
+                          toolbar: {
+                            container: [
+                              [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                              [{ 'font': [] }],
+                              [{ 'size': ['small', false, 'large', 'huge'] }],
+                              ['bold', 'italic', 'underline', 'strike'],
+                              [{ 'color': [] }, { 'background': [] }],
+                              [{ 'script': 'sub'}, { 'script': 'super' }],
+                              [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
+                              [{ 'indent': '-1'}, { 'indent': '+1' }],
+                              [{ 'direction': 'rtl' }],
+                              [{ 'align': [] }],
+                              ['link', 'image', 'video'],
+                              ['blockquote', 'code-block'],
+                              ['clean']
+                            ],
+                            handlers: {
+                              image: () => {
+                                const input = document.createElement('input');
+                                input.setAttribute('type', 'file');
+                                input.setAttribute('accept', 'image/*');
+                                input.click();
+                                
+                                input.onchange = async () => {
+                                  const file = input.files?.[0];
+                                  if (file && quillRef) {
+                                    setUploading(true);
+                                    try {
+                                      const imageUrl = await uploadContentImage(file);
+                                      if (imageUrl) {
+                                        const quill = quillRef.getEditor();
+                                        const range = quill.getSelection();
+                                        const index = range ? range.index : quill.getLength();
+                                        quill.insertEmbed(index, 'image', imageUrl);
+                                        quill.setSelection(index + 1, 0);
+                                      }
+                                    } catch (error) {
+                                      console.error('Error inserting image:', error);
+                                      toast({
+                                        title: "Error",
+                                        description: "Failed to insert image",
+                                        variant: "destructive",
+                                      });
+                                    } finally {
+                                      setUploading(false);
+                                    }
+                                  }
+                                };
                               }
                             }
+                          },
+                          clipboard: {
+                            matchVisual: false
                           }
-                        };
-                        input.click();
-                      }}
-                      className="flex items-center gap-2"
-                    >
-                      <Upload className="w-4 h-4" />
-                      Upload Image
-                    </Button>
-                    <p className="text-sm text-muted-foreground">
-                      Use the toolbar to format text with bold, italic, headers, lists, and more. Click "Upload Image" to add images.
-                    </p>
-                  </div>
+                        }}
+                        formats={[
+                          'header', 'font', 'size',
+                          'bold', 'italic', 'underline', 'strike',
+                          'color', 'background', 'script',
+                          'list', 'bullet', 'check', 'indent',
+                          'direction', 'align',
+                          'link', 'image', 'video',
+                          'blockquote', 'code-block'
+                        ]}
+                        theme="snow"
+                        placeholder="Write your project details here. Use the toolbar to format text and add images..."
+                      />
+                    </div>
+                    {uploading && (
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                        <span>Uploading image...</span>
+                      </div>
+                    )}
+                    <div className="space-y-2">
+                      <p className="text-sm text-muted-foreground">
+                        Use the rich text editor above to format your content. Click the image icon in the toolbar to add images directly to your content.
+                      </p>
+                      <div className="text-xs text-muted-foreground">
+                        <strong>Formatting Tips:</strong>
+                        <ul className="list-disc list-inside mt-1 space-y-1">
+                          <li>Use headers (H1-H6) to structure your content</li>
+                          <li>Bold, italic, and underline text for emphasis</li>
+                          <li>Create bulleted and numbered lists</li>
+                          <li>Add links and images using the toolbar</li>
+                          <li>Use code blocks for technical content</li>
+                        </ul>
+                      </div>
+                    </div>
                 </div>
               </>
             )}

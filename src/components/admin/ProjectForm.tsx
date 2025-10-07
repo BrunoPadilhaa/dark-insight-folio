@@ -9,8 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/hooks/use-toast';
 import { X, Upload, ImageIcon } from 'lucide-react';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import MDEditor from '@uiw/react-md-editor';
 
 interface Project {
   id: string;
@@ -53,8 +52,6 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
   const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const [quillRef, setQuillRef] = useState<ReactQuill | null>(null);
 
   // Prevent modal from closing when navigating away or switching tabs
   const handleBeforeUnload = useCallback((e: BeforeUnloadEvent) => {
@@ -140,33 +137,6 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
     }
   };
 
-  const uploadContentImage = async (file: File): Promise<string | null> => {
-    try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
-      const filePath = `content/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('project-images')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data } = supabase.storage
-        .from('project-images')
-        .getPublicUrl(filePath);
-
-      return data.publicUrl;
-    } catch (error) {
-      console.error('Error uploading content image:', error);
-      toast({
-        title: "Error",
-        description: "Failed to upload image",
-        variant: "destructive",
-      });
-      return null;
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -449,112 +419,20 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
             </div>
 
             {formData.has_details && (
-              <>
-                  <div className="space-y-2">
-                    <Label htmlFor="details_content">Project Details</Label>
-                    <div className="border border-border rounded-lg overflow-hidden bg-background">
-                      <ReactQuill
-                        ref={(ref) => setQuillRef(ref)}
-                        value={formData.details_content}
-                        onChange={(value, delta, source, editor) => {
-                          setFormData(prev => ({ ...prev, details_content: value }));
-                        }}
-                        style={{ 
-                          height: '400px', 
-                          marginBottom: '42px',
-                        }}
-                        modules={{
-                          toolbar: {
-                            container: [
-                              [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                              [{ 'font': [] }],
-                              [{ 'size': ['small', false, 'large', 'huge'] }],
-                              ['bold', 'italic', 'underline', 'strike'],
-                              [{ 'color': [] }, { 'background': [] }],
-                              [{ 'script': 'sub'}, { 'script': 'super' }],
-                              [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
-                              [{ 'indent': '-1'}, { 'indent': '+1' }],
-                              [{ 'direction': 'rtl' }],
-                              [{ 'align': [] }],
-                              ['link', 'image', 'video'],
-                              ['blockquote', 'code-block'],
-                              ['clean']
-                            ],
-                            handlers: {
-                              image: () => {
-                                const input = document.createElement('input');
-                                input.setAttribute('type', 'file');
-                                input.setAttribute('accept', 'image/*');
-                                input.click();
-                                
-                                input.onchange = async () => {
-                                  const file = input.files?.[0];
-                                  if (file && quillRef) {
-                                    setUploading(true);
-                                    try {
-                                      const imageUrl = await uploadContentImage(file);
-                                      if (imageUrl) {
-                                        const quill = quillRef.getEditor();
-                                        const range = quill.getSelection();
-                                        const index = range ? range.index : quill.getLength();
-                                        quill.insertEmbed(index, 'image', imageUrl);
-                                        quill.setSelection(index + 1, 0);
-                                      }
-                                    } catch (error) {
-                                      console.error('Error inserting image:', error);
-                                      toast({
-                                        title: "Error",
-                                        description: "Failed to insert image",
-                                        variant: "destructive",
-                                      });
-                                    } finally {
-                                      setUploading(false);
-                                    }
-                                  }
-                                };
-                              }
-                            }
-                          },
-                          clipboard: {
-                            matchVisual: false
-                          }
-                        }}
-                        formats={[
-                          'header', 'font', 'size',
-                          'bold', 'italic', 'underline', 'strike',
-                          'color', 'background', 'script',
-                          'list', 'bullet', 'check', 'indent',
-                          'direction', 'align',
-                          'link', 'image', 'video',
-                          'blockquote', 'code-block'
-                        ]}
-                        theme="snow"
-                        placeholder="Write your project details here. Use the toolbar to format text and add images..."
-                      />
-                    </div>
-                    {uploading && (
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-                        <span>Uploading image...</span>
-                      </div>
-                    )}
-                    <div className="space-y-2">
-                      <p className="text-sm text-muted-foreground">
-                        Use the rich text editor above to format your content. Click the image icon in the toolbar to add images directly to your content.
-                      </p>
-                      <div className="text-xs text-muted-foreground">
-                        <strong>Formatting Tips:</strong>
-                        <ul className="list-disc list-inside mt-1 space-y-1">
-                          <li>Use headers (H1-H6) to structure your content</li>
-                          <li>Bold, italic, and underline text for emphasis</li>
-                          <li>Create bulleted and numbered lists</li>
-                          <li>Add links and images using the toolbar</li>
-                          <li>Use code blocks for technical content</li>
-                        </ul>
-                      </div>
-                    </div>
+              <div className="space-y-2">
+                <Label htmlFor="details_content">Project Details (Markdown)</Label>
+                <div data-color-mode="light">
+                  <MDEditor
+                    value={formData.details_content}
+                    onChange={(value) => setFormData(prev => ({ ...prev, details_content: value || '' }))}
+                    height={400}
+                    preview="edit"
+                  />
                 </div>
-              </>
+                <p className="text-sm text-muted-foreground">
+                  Use Markdown syntax to format your content. Supports headers, bold, italic, links, images, code blocks, and more.
+                </p>
+              </div>
             )}
 
             <div className="flex gap-4 pt-4">

@@ -211,10 +211,11 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
       }
 
       onClose();
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Project save error:', error);
       toast({
         title: "Error",
-        description: `Failed to ${project ? 'update' : 'create'} project`,
+        description: error?.message || `Failed to ${project ? 'update' : 'create'} project`,
         variant: "destructive",
       });
     } finally {

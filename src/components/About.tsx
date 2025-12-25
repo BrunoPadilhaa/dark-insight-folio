@@ -3,6 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { BarChart3, Database, TrendingUp, Zap } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import DOMPurify from 'dompurify';
 
 interface AboutContent {
   id: string;
@@ -105,7 +106,7 @@ const About = () => {
                 {storyContent?.content ? (
                   storyContent.content.split('\n\n').map((paragraph, index) => (
                     <p key={index} className="text-muted-foreground leading-relaxed mb-6" 
-                       dangerouslySetInnerHTML={{ __html: paragraph }} />
+                       dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(paragraph) }} />
                   ))
                 ) : (
                   <>

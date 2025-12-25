@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, ExternalLink, Github, Edit } from "lucide-react";
 import { toast } from "sonner";
+import DOMPurify from "dompurify";
 
 interface Project {
   id: string;
@@ -139,7 +140,7 @@ export default function ProjectDetails() {
                 <CardContent className="p-6">
                   <div 
                     className="max-w-none text-foreground [&_*]:text-inherit"
-                    dangerouslySetInnerHTML={{ __html: project.details_content }}
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(project.details_content) }}
                   />
                 </CardContent>
               </Card>

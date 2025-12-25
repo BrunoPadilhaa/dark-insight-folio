@@ -1,18 +1,37 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function AdminSetup() {
+  const { user, session } = useAuth();
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
 
+  // Pre-fill email when user is logged in
+  useEffect(() => {
+    if (user?.email) {
+      setEmail(user.email);
+    }
+  }, [user]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!session) {
+      toast({
+        title: "Error",
+        description: "You must be signed in to set up admin access",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -82,6 +101,33 @@ export default function AdminSetup() {
     );
   }
 
+  // Show login prompt if not authenticated
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold">Admin Setup</CardTitle>
+            <CardDescription>
+              You must be signed in to set up admin access
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-center space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Please sign in or create an account first, then return to this page.
+            </p>
+            <Button 
+              onClick={() => window.location.href = '/admin/login'}
+              className="w-full"
+            >
+              Go to Login
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
@@ -90,21 +136,6 @@ export default function AdminSetup() {
           <CardDescription>
             Grant admin privileges to your user account
           </CardDescription>
-          <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-            <p className="text-sm text-yellow-800 dark:text-yellow-200 font-medium">
-              ⚠️ You must create an account first!
-            </p>
-            <p className="text-xs text-yellow-700 dark:text-yellow-300 mt-1">
-              Go to{' '}
-              <button 
-                onClick={() => window.location.href = '/admin/login'}
-                className="underline font-medium hover:no-underline"
-              >
-                /admin/login
-              </button>{' '}
-              to sign up, then return here.
-            </p>
-          </div>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -117,9 +148,10 @@ export default function AdminSetup() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="your@email.com"
+                disabled
               />
               <p className="text-xs text-muted-foreground">
-                This must be the email address you used to sign up
+                Admin access will be granted to your current account
               </p>
             </div>
             <Button 
@@ -132,14 +164,8 @@ export default function AdminSetup() {
           </form>
           <div className="mt-6 p-4 bg-muted rounded-lg">
             <p className="text-xs text-muted-foreground">
-              <strong>Important:</strong> You must first create an account before using this setup. If you haven't signed up yet, please{' '}
-              <button 
-                onClick={() => window.location.href = '/admin/login'}
-                className="text-primary hover:underline font-medium"
-              >
-                sign up here
-              </button>{' '}
-              first, then return to this page.
+              <strong>Note:</strong> For initial setup, you can only grant admin privileges to yourself. 
+              After the first admin is set up, only existing admins can grant admin privileges to others.
             </p>
           </div>
         </CardContent>

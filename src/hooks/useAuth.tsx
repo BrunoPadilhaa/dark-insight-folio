@@ -38,6 +38,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
+    let currentUserId: string | null = null;
+    
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
@@ -45,14 +47,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(session?.user ?? null);
         setLoading(false);
         
-        // Check admin status when user changes
-        if (session?.user) {
-          setTimeout(() => {
-            checkAdminStatus(session.user.id);
-          }, 0);
-        } else {
-          setIsAdmin(false);
-          setAdminLoading(false);
+        // Only check admin status when user actually changes (not on token refresh)
+        const newUserId = session?.user?.id ?? null;
+        if (newUserId !== currentUserId) {
+          currentUserId = newUserId;
+          if (session?.user) {
+            setTimeout(() => {
+              checkAdminStatus(session.user.id);
+            }, 0);
+          } else {
+            setIsAdmin(false);
+            setAdminLoading(false);
+          }
         }
       }
     );

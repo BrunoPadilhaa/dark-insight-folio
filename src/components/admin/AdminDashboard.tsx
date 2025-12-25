@@ -50,8 +50,13 @@ export default function AdminDashboard() {
   const [editingCertification, setEditingCertification] = useState<Certification | null>(null);
   const [activeTab, setActiveTab] = useState<'projects' | 'certifications'>('projects');
 
-  // Check for edit parameter in URL
+  // Track if we've already processed the URL edit parameter
+  const [editParamProcessed, setEditParamProcessed] = useState(false);
+
+  // Check for edit parameter in URL - only once
   useEffect(() => {
+    if (editParamProcessed || projects.length === 0) return;
+    
     const urlParams = new URLSearchParams(window.location.search);
     const editId = urlParams.get('edit');
     if (editId) {
@@ -62,7 +67,8 @@ export default function AdminDashboard() {
       // Clear the URL parameter
       window.history.replaceState({}, '', '/admin/dashboard');
     }
-  }, [projects]);
+    setEditParamProcessed(true);
+  }, [projects, editParamProcessed]);
 
   useEffect(() => {
     fetchProjects();
@@ -172,6 +178,9 @@ export default function AdminDashboard() {
     setShowAboutContentForm(false);
     setEditingProject(null);
     setEditingCertification(null);
+    // Refresh data after closing forms
+    fetchProjects();
+    fetchCertifications();
   };
 
   const handleDeleteCertification = async (id: string) => {

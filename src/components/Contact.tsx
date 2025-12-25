@@ -14,8 +14,8 @@ const Contact = () => {
     {
       icon: Linkedin,
       title: 'LinkedIn',
-      value: 'linkedin.com/in/yourusername',
-      href: 'https://linkedin.com/in/yourusername',
+      value: 'linkedin.com/in/brunopadilha-brp',
+      href: 'https://linkedin.com/in/brunopadilha-brp',
       description: 'Let\'s connect professionally'
     },
     {

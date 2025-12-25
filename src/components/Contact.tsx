@@ -28,7 +28,7 @@ const Contact = () => {
     {
       icon: MapPin,
       title: 'Location',
-      value: 'Your City, Country',
+      value: 'Leiria, Portugal',
       href: '',
       description: 'Available for remote work'
     }

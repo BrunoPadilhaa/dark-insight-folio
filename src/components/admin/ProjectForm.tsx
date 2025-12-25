@@ -8,8 +8,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/hooks/use-toast';
-import { X, Upload, ImageIcon } from 'lucide-react';
+import { X, Upload, ImageIcon, Image } from 'lucide-react';
 import MDEditor from '@uiw/react-md-editor';
+import { useRef } from 'react';
 
 interface Project {
   id: string;
@@ -52,6 +53,8 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
   const [loading, setLoading] = useState(false);
+  const [uploadingContentImage, setUploadingContentImage] = useState(false);
+  const contentImageInputRef = useRef<HTMLInputElement>(null);
 
   // Prevent modal from closing when navigating away or switching tabs
   const handleBeforeUnload = useCallback((e: BeforeUnloadEvent) => {
@@ -134,6 +137,53 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
         variant: "destructive",
       });
       return null;
+    }
+  };
+
+  const handleContentImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingContentImage(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = `content-images/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('project-images')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage
+        .from('project-images')
+        .getPublicUrl(filePath);
+
+      // Insert markdown image syntax at cursor position
+      const imageMarkdown = `\n![${file.name}](${data.publicUrl})\n`;
+      setFormData(prev => ({
+        ...prev,
+        details_content: prev.details_content + imageMarkdown
+      }));
+
+      toast({
+        title: "Success",
+        description: "Image uploaded and inserted",
+      });
+    } catch (error) {
+      console.error('Error uploading content image:', error);
+      toast({
+        title: "Error",
+        description: "Failed to upload image",
+        variant: "destructive",
+      });
+    } finally {
+      setUploadingContentImage(false);
+      // Reset input so same file can be uploaded again
+      if (contentImageInputRef.current) {
+        contentImageInputRef.current.value = '';
+      }
     }
   };
 
@@ -421,7 +471,30 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
 
             {formData.has_details && (
               <div className="space-y-2">
-                <Label htmlFor="details_content">Project Details (Markdown)</Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="details_content">Project Details (Markdown)</Label>
+                  <div>
+                    <input
+                      ref={contentImageInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleContentImageUpload}
+                      className="hidden"
+                      id="content-image-upload"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={uploadingContentImage}
+                      onClick={() => contentImageInputRef.current?.click()}
+                      className="flex items-center gap-2"
+                    >
+                      <Image className="w-4 h-4" />
+                      {uploadingContentImage ? 'Uploading...' : 'Insert Image'}
+                    </Button>
+                  </div>
+                </div>
                 <div data-color-mode="light">
                   <MDEditor
                     value={formData.details_content}
@@ -431,7 +504,7 @@ export default function ProjectForm({ project, onClose }: ProjectFormProps) {
                   />
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Use Markdown syntax to format your content. Supports headers, bold, italic, links, images, code blocks, and more.
+                  Use Markdown syntax to format your content. Click "Insert Image" to upload and add images.
                 </p>
               </div>
             )}

@@ -139,7 +139,21 @@ export default function ProjectDetails() {
               <Card className="bg-gradient-card border-border/50 animate-slide-up">
                 <CardContent className="p-6">
                   <div 
-                    className="max-w-none text-foreground [&_*]:text-inherit"
+                    className="prose prose-invert max-w-none 
+                      prose-headings:text-foreground prose-headings:font-semibold
+                      prose-h1:text-3xl prose-h1:mb-6 prose-h1:mt-8
+                      prose-h2:text-2xl prose-h2:mb-4 prose-h2:mt-6
+                      prose-h3:text-xl prose-h3:mb-3 prose-h3:mt-4
+                      prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:mb-4
+                      prose-a:text-primary prose-a:hover:underline
+                      prose-strong:text-foreground prose-strong:font-semibold
+                      prose-ul:list-disc prose-ul:pl-6 prose-ul:mb-4 prose-ul:text-muted-foreground
+                      prose-ol:list-decimal prose-ol:pl-6 prose-ol:mb-4 prose-ol:text-muted-foreground
+                      prose-li:mb-2
+                      prose-code:bg-secondary prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-primary prose-code:text-sm
+                      prose-pre:bg-secondary prose-pre:p-4 prose-pre:rounded-lg prose-pre:overflow-x-auto
+                      prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-muted-foreground
+                      prose-img:rounded-lg prose-img:my-6"
                     dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(project.details_content) }}
                   />
                 </CardContent>

@@ -340,10 +340,10 @@ Completeness, consistency, accuracy, uniqueness, and validity.
   'power-bi',
   ARRAY['Power BI','DAX','Sports Analytics'],
   'https://sites.google.com/sitesv-images-rt/ACHe0d1EIuZ2F3DxlrDs31NyGhT8xRoDyoWUL95vWjzM2NXOH1YIVHkYD_gmVW05tfjV2DkpEi-ICn1xX7GPrL_PyjsSJcpEkrrAAIwTz6GDDp4yiAcw5-AxtWfzSpRolD8z1xNcfF34GnSW2MoGKrMirYbI3uGBpARk2YK0jWK4PQ2nbgsBAUyzq1U4hLXK2F8EityYMeyhAxt-HHZnE-vCpXPG-JoaH-3L6_nIfGX2=w1280',
-  -- TODO: this is a private "groups/me/reports" workspace URL tied to the owner's
-  -- Power BI login, not a public share link like the other four dashboards below.
-  -- Replace with a public "app.powerbi.com/view?r=..." share link before relying
-  -- on it to work for anonymous site visitors.
+  -- TODO: this is a private "groups/me/reports" workspace URL tied to the owner
+  -- account Power BI login, not a public share link like the other four
+  -- dashboards below. Replace with a public "app.powerbi.com/view?r=..." share
+  -- link before relying on it to work for anonymous site visitors.
   'https://app.powerbi.com/groups/me/reports/d4e1cd13-ae4c-4a65-989a-80180a4ea19a/ReportSection86e4a3f4da33095da635?experience=power-bi',
   NULL,
   false,

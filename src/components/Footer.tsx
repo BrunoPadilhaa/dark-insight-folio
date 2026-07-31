@@ -26,14 +26,8 @@ const Footer = () => {
             >
               Projects
             </a>
-            <a 
-              href="#about" 
-              className="text-muted-foreground hover:text-primary transition-colors text-sm"
-            >
-              About
-            </a>
-            <a 
-              href="#contact" 
+            <a
+              href="#contact"
               className="text-muted-foreground hover:text-primary transition-colors text-sm"
             >
               Contact

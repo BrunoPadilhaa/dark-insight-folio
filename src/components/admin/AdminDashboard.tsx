@@ -49,6 +49,7 @@ export default function AdminDashboard() {
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [editingCertification, setEditingCertification] = useState<Certification | null>(null);
   const [activeTab, setActiveTab] = useState<'projects' | 'certifications'>('projects');
+  const [uploadingResume, setUploadingResume] = useState(false);
 
   // Track if we've already processed the URL edit parameter
   const [editParamProcessed, setEditParamProcessed] = useState(false);
@@ -169,6 +170,27 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error('Error toggling project visibility:', error);
       toast.error('Failed to update project visibility');
+    }
+  };
+
+  const handleResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingResume(true);
+    try {
+      const { error } = await supabase.storage
+        .from('resumes')
+        .upload('resume.pdf', file, { upsert: true });
+
+      if (error) throw error;
+      toast.success('Resume updated successfully');
+    } catch (error) {
+      console.error('Error uploading resume:', error);
+      toast.error('Failed to upload resume');
+    } finally {
+      setUploadingResume(false);
+      e.target.value = '';
     }
   };
 
@@ -324,18 +346,29 @@ export default function AdminDashboard() {
           <div className="space-y-6">
             <div className="bg-card rounded-lg border border-border p-6">
               <h2 className="text-xl font-semibold text-foreground mb-4">Resume Management</h2>
-              <input
-                type="file"
-                accept=".pdf"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    console.log('Resume file selected:', file.name);
-                    toast.success('Resume upload feature coming soon!');
-                  }
-                }}
-                className="bg-background border border-border rounded-md p-2 text-foreground"
-              />
+              <div className="flex items-center gap-4 flex-wrap">
+                <input
+                  type="file"
+                  accept=".pdf"
+                  disabled={uploadingResume}
+                  onChange={handleResumeUpload}
+                  className="bg-background border border-border rounded-md p-2 text-foreground disabled:opacity-50"
+                />
+                {uploadingResume && (
+                  <span className="text-sm text-muted-foreground">Uploading...</span>
+                )}
+                <a
+                  href={supabase.storage.from('resumes').getPublicUrl('resume.pdf').data.publicUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline text-sm"
+                >
+                  View current resume
+                </a>
+              </div>
+              <p className="text-sm text-muted-foreground mt-2">
+                Uploading a new PDF replaces the resume shown by the "Download Resume" button on the homepage.
+              </p>
             </div>
 
             <div className="space-y-4">

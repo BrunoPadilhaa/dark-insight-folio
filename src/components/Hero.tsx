@@ -35,7 +35,8 @@ const Hero = () => {
               const {
                 data
               } = await supabase.storage.from('resumes').list('', {
-                limit: 1
+                limit: 1,
+                sortBy: { column: 'created_at', order: 'desc' }
               });
               if (data && data.length > 0) {
                 const {

@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 990 710" font-family="ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="pfeed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#3B82F6"/>
+    </marker>
+  </defs>
+  <rect width="990" height="710" fill="#0A0A0A"/>
+
+  <!-- Panel 1: fct_transactions -->
+  <g transform="translate(40,40)">
+    <rect width="440" height="300" rx="10" fill="#141414" stroke="#262626" stroke-width="1.5"/>
+    <rect width="4" height="300" rx="2" fill="#3B82F6"/>
+    <text x="20" y="34" font-size="16" font-weight="700" fill="#3B82F6">fct_transactions</text>
+    <text x="20" y="54" font-size="11.5" font-style="italic" fill="#999999">1 row per transaction_id</text>
+    <line x1="20" y1="66" x2="420" y2="66" stroke="#262626"/>
+    <text x="20" y="88" font-size="10" letter-spacing="1" fill="#666666">FEEDS FROM</text>
+    <text x="20" y="112" font-size="12" font-family="ui-monospace, Consolas, Menlo, monospace" fill="#999999">stg_transactions_xtb</text>
+    <text x="20" y="132" font-size="12" font-family="ui-monospace, Consolas, Menlo, monospace" fill="#999999">dim_asset</text>
+    <text x="20" y="152" font-size="12" font-family="ui-monospace, Consolas, Menlo, monospace" fill="#999999">dim_transaction_type</text>
+    <text x="20" y="172" font-size="12" font-family="ui-monospace, Consolas, Menlo, monospace" fill="#999999">dim_currency</text>
+    <path d="M225,141 L275,141" fill="none" stroke="#3B82F6" stroke-width="1.5" marker-end="url(#pfeed)"/>
+    <rect x="280" y="116" width="140" height="50" rx="6" fill="#12203a" stroke="#3B82F6" stroke-width="1.5"/>
+    <text x="350" y="146" font-size="12.5" font-weight="700" fill="#6FA8FA" text-anchor="middle">fct_transactions</text>
+  </g>
+
+  <!-- Panel 2: fct_asset_prices -->
+  <g transform="translate(510,40)">
+    <rect width="440" height="300" rx="10" fill="#141414" stroke="#262626" stroke-width="1.5"/>
+    <rect width="4" height="300" rx="2" fill="#3B82F6"/>
+    <text x="20" y="34" font-size="16" font-weight="700" fill="#3B82F6">fct_asset_prices</text>
+    <text x="20" y="54" font-size="11.5" font-style="italic" fill="#999999">1 row per asset_id + price_date_id</text>
+    <text x="20" y="70" font-size="10.5" font-style="italic" fill="#8B5CF6">forward-filled from stg_asset_prices + dim_asset + dim_currency</text>
+    <line x1="20" y1="82" x2="420" y2="82" stroke="#262626"/>
+    <text x="20" y="104" font-size="10" letter-spacing="1" fill="#666666">FEEDS FROM</text>
+    <text x="20" y="128" font-size="12" font-family="ui-monospace, Consolas, Menlo, monospace" fill="#8B5CF6">int_asset_prices_filled</text>
+    <path d="M225,123 L275,123" fill="none" stroke="#3B82F6" stroke-width="1.5" marker-end="url(#pfeed)"/>
+    <rect x="280" y="98" width="140" height="50" rx="6" fill="#12203a" stroke="#3B82F6" stroke-width="1.5"/>
+    <text x="350" y="128" font-size="12.5" font-weight="700" fill="#6FA8FA" text-anchor="middle">fct_asset_prices</text>
+  </g>
+
+  <!-- Panel 3: fct_exchange_rates -->
+  <g transform="translate(40,370)">
+    <rect width="440" height="300" rx="10" fill="#141414" stroke="#262626" stroke-width="1.5"/>
+    <rect width="4" height="300" rx="2" fill="#3B82F6"/>
+    <text x="20" y="34" font-size="16" font-weight="700" fill="#3B82F6">fct_exchange_rates</text>
+    <text x="20" y="54" font-size="11.5" font-style="italic" fill="#999999">1 row per rate_date_id + currency pair</text>
+    <text x="20" y="70" font-size="10.5" font-style="italic" fill="#8B5CF6">forward-filled from stg_exchange_rates + dim_currency + dim_date</text>
+    <line x1="20" y1="82" x2="420" y2="82" stroke="#262626"/>
+    <text x="20" y="104" font-size="10" letter-spacing="1" fill="#666666">FEEDS FROM</text>
+    <text x="20" y="128" font-size="12" font-family="ui-monospace, Consolas, Menlo, monospace" fill="#8B5CF6">int_exchange_rates_filled</text>
+    <path d="M225,123 L275,123" fill="none" stroke="#3B82F6" stroke-width="1.5" marker-end="url(#pfeed)"/>
+    <rect x="280" y="98" width="140" height="50" rx="6" fill="#12203a" stroke="#3B82F6" stroke-width="1.5"/>
+    <text x="350" y="128" font-size="12.5" font-weight="700" fill="#6FA8FA" text-anchor="middle">fct_exchange_rates</text>
+  </g>
+
+  <!-- Panel 4: fct_portfolio_snapshots_daily -->
+  <g transform="translate(510,370)">
+    <rect width="440" height="300" rx="10" fill="#141414" stroke="#262626" stroke-width="1.5"/>
+    <rect width="4" height="300" rx="2" fill="#3B82F6"/>
+    <text x="20" y="34" font-size="15" font-weight="700" fill="#3B82F6">fct_portfolio_snapshots_daily</text>
+    <text x="20" y="54" font-size="11.5" font-style="italic" fill="#999999">1 row per asset_id + date_id, held positions only</text>
+    <text x="20" y="70" font-size="10.5" font-style="italic" fill="#6FA8FA">aggregates trades, prices &amp; FX into daily EUR valuations</text>
+    <line x1="20" y1="82" x2="420" y2="82" stroke="#262626"/>
+    <text x="20" y="104" font-size="10" letter-spacing="1" fill="#666666">FEEDS FROM</text>
+    <text x="20" y="124" font-size="12" font-family="ui-monospace, Consolas, Menlo, monospace" fill="#999999">dim_date</text>
+    <text x="20" y="144" font-size="12" font-family="ui-monospace, Consolas, Menlo, monospace" fill="#999999">dim_asset</text>
+    <text x="20" y="164" font-size="12" font-family="ui-monospace, Consolas, Menlo, monospace" fill="#999999">dim_currency</text>
+    <text x="20" y="184" font-size="12" font-family="ui-monospace, Consolas, Menlo, monospace" fill="#999999">dim_transaction_type</text>
+    <text x="20" y="204" font-size="12" font-family="ui-monospace, Consolas, Menlo, monospace" fill="#999999">fct_transactions</text>
+    <text x="20" y="224" font-size="12" font-family="ui-monospace, Consolas, Menlo, monospace" fill="#999999">fct_exchange_rates</text>
+    <text x="20" y="244" font-size="12" font-family="ui-monospace, Consolas, Menlo, monospace" fill="#999999">fct_asset_prices</text>
+    <path d="M225,183 L275,183" fill="none" stroke="#3B82F6" stroke-width="1.5" marker-end="url(#pfeed)"/>
+    <rect x="280" y="158" width="140" height="50" rx="6" fill="#12203a" stroke="#3B82F6" stroke-width="1.5"/>
+    <text x="350" y="184" font-size="11" font-weight="700" fill="#6FA8FA" text-anchor="middle">fct_portfolio_</text>
+    <text x="350" y="198" font-size="11" font-weight="700" fill="#6FA8FA" text-anchor="middle">snapshots_daily</text>
+  </g>
+</svg>

@@ -62,7 +62,7 @@ const Projects = () => {
           <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
             Featured Projects
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">Explore my portfolio of Business Intelligence projects, showcasing data visualization, analytics engineering, and database optimization.</p>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">Explore my portfolio of Business Intelligence projects, showcasing data visualization, analytics engineering, and data modeling.</p>
         </div>
 
         {/* Filter Buttons */}
@@ -97,8 +97,10 @@ const Projects = () => {
 
         {/* View More Button */}
         <div className="text-center mt-16">
-          <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary hover:text-white px-8 py-4 text-lg transition-all duration-300 hover-glow">
-            View All Projects on GitHub
+          <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary hover:text-white px-8 py-4 text-lg transition-all duration-300 hover-glow" asChild>
+            <a href="https://github.com/BrunoPadilhaa" target="_blank" rel="noopener noreferrer">
+              View All Projects on GitHub
+            </a>
           </Button>
         </div>
       </div>

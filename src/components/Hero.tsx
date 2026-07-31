@@ -16,15 +16,9 @@ const Hero = () => {
           <div className="mb-6">
             <h1 className="text-5xl md:text-7xl font-bold mb-4 bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">Bruno Padilha</h1>
             <h2 className="text-2xl md:text-3xl font-medium text-primary mb-6">
-              BI & Data Analyst
+              Analytics Engineer
             </h2>
           </div>
-
-          {/* Tagline */}
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-12 leading-relaxed">
-            Transforming raw data into actionable insights through advanced analytics, 
-            interactive dashboards, and scalable data solutions.
-          </p>
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
@@ -62,13 +56,13 @@ const Hero = () => {
 
           {/* Social Links */}
           <div className="flex justify-center space-x-6">
-            <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer" className="p-3 rounded-full border border-border hover:border-primary hover:bg-primary/10 transition-all duration-300 hover-lift group">
+            <a href="https://github.com/BrunoPadilhaa" target="_blank" rel="noopener noreferrer" className="p-3 rounded-full border border-border hover:border-primary hover:bg-primary/10 transition-all duration-300 hover-lift group">
               <Github className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
             </a>
             <a href="https://www.linkedin.com/in/brunopadilha-brp/" target="_blank" rel="noopener noreferrer" className="p-3 rounded-full border border-border hover:border-primary hover:bg-primary/10 transition-all duration-300 hover-lift group">
               <Linkedin className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
             </a>
-            <a href="mailto:your.email@example.com" className="p-3 rounded-full border border-border hover:border-primary hover:bg-primary/10 transition-all duration-300 hover-lift group">
+            <a href="mailto:bruno_brp@hotmail.com" className="p-3 rounded-full border border-border hover:border-primary hover:bg-primary/10 transition-all duration-300 hover-lift group">
               <Mail className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
             </a>
           </div>

@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Github, Linkedin, Mail, MapPin } from 'lucide-react';
 
@@ -21,8 +20,8 @@ const Contact = () => {
     {
       icon: Github,
       title: 'GitHub',
-      value: 'github.com/yourusername',
-      href: 'https://github.com/yourusername',
+      value: 'github.com/BrunoPadilhaa',
+      href: 'https://github.com/BrunoPadilhaa',
       description: 'Check out my code'
     },
     {
@@ -81,33 +80,6 @@ const Contact = () => {
                 </CardContent>
               </Card>
             ))}
-          </div>
-
-          {/* CTA Section */}
-          <div className="text-center bg-gradient-card rounded-2xl p-8 border border-border/50 animate-fade-in">
-            <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-              Whether you need a complex dashboard, data pipeline optimization, or strategic 
-              analytics consulting, I'm here to help bring your vision to life.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                size="lg" 
-                className="bg-gradient-primary hover:opacity-90 text-white font-medium px-8 py-4 text-lg hover-glow"
-                asChild
-              >
-                <a href="mailto:your.email@example.com">
-                  <Mail className="mr-2 h-5 w-5" />
-                  Get In Touch
-                </a>
-              </Button>
-              <Button 
-                variant="outline" 
-                size="lg" 
-                className="border-primary text-primary hover:bg-primary hover:text-white px-8 py-4 text-lg transition-all duration-300"
-              >
-                Schedule a Call
-              </Button>
-            </div>
           </div>
         </div>
       </div>

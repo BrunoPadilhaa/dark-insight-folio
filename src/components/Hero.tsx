@@ -30,11 +30,26 @@ const Hero = () => {
               View My Work
               <ArrowDown className="ml-2 h-5 w-5 group-hover:translate-y-1 transition-transform" />
             </Button>
-            <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary hover:text-white px-8 py-4 text-lg transition-all duration-300" onClick={() => {
-            const {
-              data: file
-            } = supabase.storage.from('resumes').getPublicUrl('resume.pdf');
-            window.open(file.publicUrl, '_blank');
+            <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary hover:text-white px-8 py-4 text-lg transition-all duration-300" onClick={async () => {
+            try {
+              const {
+                data: file
+              } = supabase.storage.from('resumes').getPublicUrl('resume.pdf');
+              const response = await fetch(file.publicUrl);
+              if (!response.ok) throw new Error('Resume not found');
+              const blob = await response.blob();
+              const blobUrl = URL.createObjectURL(blob);
+              const link = document.createElement('a');
+              link.href = blobUrl;
+              link.download = 'Bruno_Padilha_Resume.pdf';
+              document.body.appendChild(link);
+              link.click();
+              link.remove();
+              URL.revokeObjectURL(blobUrl);
+            } catch (error) {
+              console.error('Error downloading resume:', error);
+              alert('Resume not available for download');
+            }
           }}>
               Download Resume
             </Button>

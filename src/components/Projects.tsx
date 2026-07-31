@@ -94,15 +94,6 @@ const Projects = () => {
                 </p>
               </div>}
           </>}
-
-        {/* View More Button */}
-        <div className="text-center mt-16">
-          <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary hover:text-white px-8 py-4 text-lg transition-all duration-300 hover-glow" asChild>
-            <a href="https://github.com/BrunoPadilhaa" target="_blank" rel="noopener noreferrer">
-              View All Projects on GitHub
-            </a>
-          </Button>
-        </div>
       </div>
     </section>;
 };

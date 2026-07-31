@@ -9,7 +9,7 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row items-center justify-between">
           {/* Left - Copyright */}
           <div className="text-muted-foreground text-sm mb-4 md:mb-0">
-            © {currentYear} Your Name. All rights reserved.
+            © {currentYear} Bruno Padilha. All rights reserved.
           </div>
 
           {/* Center - Navigation */}
@@ -43,7 +43,7 @@ const Footer = () => {
           {/* Right - Social Links */}
           <div className="flex space-x-4">
             <a 
-              href="https://github.com/yourusername" 
+              href="https://github.com/BrunoPadilhaa"
               target="_blank" 
               rel="noopener noreferrer"
               className="p-2 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-300"
@@ -51,7 +51,7 @@ const Footer = () => {
               <Github className="h-5 w-5" />
             </a>
             <a 
-              href="https://linkedin.com/in/yourusername" 
+              href="https://linkedin.com/in/brunopadilha-brp"
               target="_blank" 
               rel="noopener noreferrer"
               className="p-2 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-300"
@@ -59,19 +59,12 @@ const Footer = () => {
               <Linkedin className="h-5 w-5" />
             </a>
             <a 
-              href="mailto:your.email@example.com"
+              href="mailto:bruno_brp@hotmail.com"
               className="p-2 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-300"
             >
               <Mail className="h-5 w-5" />
             </a>
           </div>
-        </div>
-
-        {/* Bottom - Additional Info */}
-        <div className="mt-8 pt-8 border-t border-border text-center">
-          <p className="text-muted-foreground text-xs">
-            Built with React, TypeScript, and Tailwind CSS. Powered by creativity and caffeine.
-          </p>
         </div>
       </div>
     </footer>
